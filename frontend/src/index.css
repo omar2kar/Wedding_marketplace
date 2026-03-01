@@ -1,0 +1,516 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* حجم الموقع العام */
+html {
+  font-size: 16px; /* الحجم الافتراضي الطبيعي */
+}
+
+body {
+  /* Gradient background inspired by reference image */
+  background: linear-gradient(135deg,
+    /* top-left soft lavender */ #b9a9d8 0%,
+    /* mid lavender-pink */ #ccb0cc 30%,
+    /* blush peach */ #e5b8b6 60%,
+    /* warm apricot */ #f1b692 85%,
+    /* light champagne */ #f4e9dc 100%
+  );
+  min-height: 100vh;
+
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 1rem; /* 16px */
+  line-height: 1.6;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Theme Variables */
+:root {
+  /* Light Mode Colors */
+  /* Pink (top) to Blue (bottom) gradient */
+  --bg-primary: linear-gradient(180deg, #f8d7de 0%, #d8d1e8 40%, #a9b9f0 70%, #5fa2f4 100%);
+  --bg-secondary: rgba(255, 255, 255, 0.1);
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: rgba(0, 0, 0, 0.6);
+  --text-light: rgba(0, 0, 0, 0.8);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.28);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --shadow-color: rgba(31, 38, 135, 0.37);
+  --pink-primary: #ec4899;
+  --pink-hover: #db2777;
+  --green-primary: #10b981;
+  --yellow-primary: #f59e0b;
+  --serif: 'Playfair Display', serif;
+}
+
+.font-playfair {
+  font-family: var(--serif);
+}
+
+.dark {
+  /* Dark Mode Colors - Beautiful Night Gradient */
+  --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a0d2e 20%, #16213e 40%, #0f3460 60%, #2d1b69 80%, #1e1b4b 100%);
+  --bg-secondary: rgba(15, 15, 35, 0.8);
+  --text-primary: #ffffff;
+  --text-secondary: #e2e8f0;
+  --text-muted: rgba(255, 255, 255, 0.7);
+  --text-light: rgba(255, 255, 255, 0.9);
+  --border-color: rgba(255, 255, 255, 0.15);
+  --glass-bg: rgba(15, 15, 35, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --shadow-color: rgba(0, 0, 0, 0.8);
+  --pink-primary: linear-gradient(135deg, #4f46e5 0%, #3b82f6 50%, #6366f1 100%);
+  --pink-hover: linear-gradient(135deg, #3730a3 0%, #2563eb 50%, #4f46e5 100%);
+  --green-primary: #34d399;
+  --yellow-primary: #fbbf24;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(120%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--shadow-color);
+  transition: all 0.3s ease;
+  /* تحسين وضوح النص داخل الكرت */
+  color: var(--text-primary);
+}
+
+/* إضافة ظل للنص داخل الكروت الزجاجية */
+.glass *,
+.dark .glass * {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+
+/* تحويل أي نص أبيض أو رمادي داخل الكرت إلى اللون الرئيسي لزيادة التباين */
+.glass .text-white,
+.glass .text-white\/80,
+.glass .text-white\/90,
+.glass .text-white\/60,
+.glass .text-gray-100,
+.glass .text-gray-200,
+.glass .text-gray-300,
+.glass .text-gray-400,
+.glass .text-gray-500,
+.glass .text-gray-600,
+.glass .text-gray-700,
+.glass .text-gray-800,
+.glass .text-gray-900,
+.glass [class*="text-gray-"] {
+  color: var(--text-primary) !important;
+}
+
+.glass [class*="text-white"] {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode specific glass effect */
+.dark .glass {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Icon color utilities for theme-aware icons */
+.icon-primary {
+  @apply text-white dark:text-white;
+}
+
+.icon-secondary {
+  @apply text-white dark:text-white;
+}
+
+.icon-success {
+  @apply text-white dark:text-white;
+}
+
+.icon-warning {
+  @apply text-white dark:text-white;
+}
+
+.icon-accent {
+  @apply text-white dark:text-white;
+}
+
+.icon-neutral {
+  @apply text-white dark:text-white;
+}
+
+/* Text color utilities for theme support */
+.text-theme-primary {
+  color: var(--text-primary);
+}
+
+.text-theme-secondary {
+  color: var(--text-secondary);
+}
+
+.text-theme-muted {
+  color: var(--text-muted);
+}
+
+.text-theme-light {
+  color: var(--text-light);
+}
+
+/* Button theme utilities */
+html, body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Force dark background in dark mode */
+.dark {
+  background: var(--bg-primary) !important;
+}
+
+.dark body {
+  background: var(--bg-primary) !important;
+}
+
+.dark html {
+  background: var(--bg-primary) !important;
+}
+
+.dark #root {
+  background: transparent !important;
+}
+
+/* Override any light backgrounds in dark mode */
+.dark .bg-white {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .bg-gray-50 {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark .bg-gray-100 {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .bg-gray-200 {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ensure containers are transparent in dark mode */
+.dark .container {
+  background: transparent !important;
+}
+
+.dark div {
+  background-color: transparent;
+}
+
+.btn-theme-pink {
+  background-color: var(--pink-primary);
+  transition: background-color 0.3s ease;
+}
+
+.btn-theme-pink:hover {
+  background-color: var(--pink-hover);
+}
+
+/* Border utilities */
+.border-theme {
+  border-color: var(--border-color);
+}
+
+/* Custom scrollbar for dark mode */
+.dark ::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* Comprehensive Dark Mode Overrides */
+.dark {
+  background: #0a0a0f !important;
+}
+
+.dark * {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Force beautiful night gradient background */
+.dark body,
+.dark html,
+.dark #root {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a0d2e 20%, #16213e 40%, #0f3460 60%, #2d1b69 80%, #1e1b4b 100%) !important;
+}
+
+/* Override all container backgrounds */
+.dark .container,
+.dark main,
+.dark section,
+.dark article {
+  background: transparent !important;
+}
+
+.dark .text-white {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-white\/80 {
+  color: var(--text-muted) !important;
+}
+
+.dark .text-white\/90 {
+  color: var(--text-light) !important;
+}
+
+.dark .text-white\/60 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-700 {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-gray-900 {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-primary-600 {
+  color: var(--pink-primary) !important;
+}
+
+.dark .text-primary-700 {
+  color: var(--text-primary) !important;
+}
+
+.dark .bg-white {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .bg-white\/10 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .bg-primary-600 {
+  background: var(--pink-primary) !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3) !important;
+  border: none !important;
+}
+
+.dark .bg-primary-600:hover {
+  background: var(--pink-hover) !important;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4) !important;
+  transform: translateY(-1px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dark .bg-primary-700:hover {
+  background: var(--pink-hover) !important;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4) !important;
+  transform: translateY(-1px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dark .bg-pink-500 {
+  background: var(--pink-primary) !important;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3) !important;
+  border: none !important;
+}
+
+.dark .bg-pink-500:hover {
+  background: var(--pink-hover) !important;
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4) !important;
+  transform: translateY(-1px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.dark .text-pink-300 {
+  color: var(--pink-primary) !important;
+}
+
+.dark .text-primary-600 {
+  color: var(--pink-primary) !important;
+}
+
+.dark .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark .border-white\/30 {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark .border-white\/40 {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.dark .border-white\/60 {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark .border-primary-500 {
+  border-color: var(--pink-primary) !important;
+}
+
+.dark .border-pink-300 {
+  border-color: var(--pink-primary) !important;
+}
+
+/* Input and form elements */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: var(--pink-primary) !important;
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.1) !important;
+}
+
+/* Button overrides */
+.dark button {
+  color: var(--text-primary);
+}
+
+/* Table overrides */
+.dark table {
+  background-color: transparent !important;
+}
+
+.dark th {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark td {
+  color: var(--text-secondary) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Card and container overrides */
+.dark .shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Ensure all text is readable */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: var(--text-primary) !important;
+}
+
+.dark p, .dark span, .dark div {
+  color: inherit;
+}
+
+.dark label {
+  color: var(--text-secondary) !important;
+}
+
+/* RTL Support for future Arabic implementation */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="ltr"] {
+  text-align: left;
+}
+
+/* ===== React Big Calendar Overrides ===== */
+.rbc-calendar,
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view,
+.rbc-agenda-table,
+.rbc-timeslot-group {
+  background: transparent !important;
+}
+
+/* العمود الفاصل بين الأيام */
+.rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid var(--border-color);
+}
+
+/* خلايا الأيام */
+.rbc-day-bg {
+  background: transparent !important;
+}
+
+/* ترويسة الأيام */
+.rbc-header {
+  background: var(--glass-bg) !important;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark .rbc-header {
+  color: var(--text-primary);
+}
+
+/* جدول الأجندة */
+.rbc-agenda-table th {
+  background: var(--glass-bg) !important;
+  color: var(--text-primary);
+}
+
+/* الحدث */
+.rbc-event {
+  background: var(--pink-primary) !important;
+  border: none;
+  color: #fff;
+}

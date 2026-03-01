@@ -1,0 +1,44 @@
+/* 
+ * إعدادات حجم الموقع المتناسقة
+ * الحاوية الأساسية تملأ الشاشة والمحتويات أصغر قليلاً
+ */
+
+/* الحاوية الأساسية - تملأ الشاشة */
+body, html, #root {
+  zoom: 1; /* 100% - يملأ الشاشة بالكامل */
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* المحتويات - أصغر قليلاً للراحة */
+body * {
+  zoom: 0.98; /* 98% - المحتويات أصغر قليلاً */
+}
+
+/* الصور */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* تحسينات بسيطة للتناسق */
+.card, [class*="card"] {
+  padding: 1rem !important;
+}
+
+.modal, .dialog {
+  padding: 1.5rem !important;
+}
+
+/* تجاوب مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+}
