@@ -35,6 +35,7 @@ import AllServices from './pages/admin/AllServices';
 import AllReviews from './pages/admin/AllReviews';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminPermissions from './pages/admin/AdminPermissions';
+import FeaturedVendors from './pages/admin/FeaturedVendors';
 
 import ServiceProfile from './pages/ServiceProfile';
 import VendorProfile from './pages/VendorProfile';

@@ -17,6 +17,8 @@ import vendorServices from './routes/vendorServices';
 import services from './routes/services';
 const serviceRoutes = require('./routes/serviceRoutes');
 const bookings = require('./routes/bookings');
+// بعد سطر const bookings أو const vendorRoutes
+const featuredVendors = require('./routes/featuredVendors');
 const vendorRoutes = require('./routes/vendorRoutes');
 import favorites from './routes/favorites';
 import reviews2 from './routes/reviews';
@@ -59,6 +61,7 @@ app.use('/api', adminPermissions);
 app.use('/api', vendorServices);
 app.use('/api/services', serviceRoutes); // Vendor-profile based listing
 app.use('/api/bookings', bookings); // Booking system
+app.use('/api/featured-vendors', featuredVendors);
 app.use('/api/vendor', vendorRoutes); // Vendor profile management
 app.use('/api/services-legacy', services); // Legacy individual services (kept for backwards compat)
 app.use('/api/favorites', favorites);
