@@ -28,100 +28,109 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 glass p-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            {t('sign In To Your Account')}
-          </h2>
-          <p className="mt-2 text-center text-sm text-white/80">
-            {t('or')}{' '}
-            <Link to="/register" className="font-medium text-primary-600 hover:text-white/70">
-              {t('registerHere')}
-            </Link>
-          </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                {t('emailAddress')}
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-white/60 bg-white/10 placeholder-white/60 text-white rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('emailAddress')}
-                {...register('email', { 
-                  required: t('emailRequired'),
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: t('invalidEmail')
-                  }
-                })}
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="sr-only">
-                {t('password')}
-              </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-white/60 bg-white/10 placeholder-white/60 text-white rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder={t('password')}
-                {...register('password', { 
-                  required: t('passwordRequired'),
-                  minLength: {
-                    value: 6,
-                    message: t('passwordMinLength')
-                  }
-                })}
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
-              )}
-            </div>
-          </div>
-
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-white/60 rounded"
-                {...register('rememberMe')}
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-white">
-                {t('rememberMe')}
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <Link to="/forgot-password" className="font-medium text-primary-600 hover:text-white/70">
-                {t('forgotPassword')}
+    <div style={{ background: '#f4e9dc', minHeight: '100vh', paddingTop: '80px' }}>
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Card */}
+          <div className="bg-white rounded-2xl shadow-sm p-8 md:p-10" style={{ border: '1px solid rgba(199,164,138,0.15)' }}>
+            {/* Logo */}
+            <div className="text-center mb-8">
+              <Link to="/" className="font-playfair text-3xl font-semibold" style={{ color: '#c7a48a' }}>
+                ONEDAY
               </Link>
+              <h2 className="font-playfair text-2xl mt-4 mb-1" style={{ color: '#1a1a2e', fontWeight: 500 }}>
+                {t('Welcome Back')}
+              </h2>
+              <p className="text-sm" style={{ color: '#b9a18e' }}>
+                {t('Sign in to your account')}
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: '#6b5e53' }}>
+                  {t('Email')}
+                </label>
+                <input type="email" autoComplete="email" placeholder="you@example.com"
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                  style={{ background: '#faf7f4', border: '1.5px solid rgba(199,164,138,0.25)', color: '#1a1a2e' }}
+                  {...register('email', {
+                    required: t('Email is required'),
+                    pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: t('Invalid email') }
+                  })}
+                  onFocus={e => e.target.style.borderColor = '#c7a48a'}
+                  onBlur={e => e.target.style.borderColor = 'rgba(199,164,138,0.25)'}
+                />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="block text-sm font-medium mb-1.5" style={{ color: '#6b5e53' }}>
+                  {t('Password')}
+                </label>
+                <input type="password" autoComplete="current-password" placeholder="••••••••"
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                  style={{ background: '#faf7f4', border: '1.5px solid rgba(199,164,138,0.25)', color: '#1a1a2e' }}
+                  {...register('password', {
+                    required: t('Password is required'),
+                    minLength: { value: 6, message: t('Minimum 6 characters') }
+                  })}
+                  onFocus={e => e.target.style.borderColor = '#c7a48a'}
+                  onBlur={e => e.target.style.borderColor = 'rgba(199,164,138,0.25)'}
+                />
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+              </div>
+
+              {/* Remember + Forgot */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" className="w-4 h-4 rounded" style={{ accentColor: '#c7a48a' }}
+                    {...register('rememberMe')} />
+                  <span className="text-sm" style={{ color: '#a08b7a' }}>{t('Remember me')}</span>
+                </label>
+                <Link to="/forgot-password" className="text-sm font-medium hover:opacity-70 transition-colors" style={{ color: '#c7a48a' }}>
+                  {t('Forgot password?')}
+                </Link>
+              </div>
+
+              {/* Submit */}
+              <button type="submit" disabled={isLoading}
+                className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-all hover:opacity-90 hover:shadow-md disabled:opacity-50"
+                style={{ background: '#c7a48a' }}>
+                {isLoading ? t('Signing in...') : t('Sign In')}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-6">
+              <div className="flex-1 h-px" style={{ background: 'rgba(199,164,138,0.2)' }}></div>
+              <span className="text-xs" style={{ color: '#b9a18e' }}>{t('or')}</span>
+              <div className="flex-1 h-px" style={{ background: 'rgba(199,164,138,0.2)' }}></div>
+            </div>
+
+            {/* Register Link */}
+            <div className="text-center">
+              <p className="text-sm" style={{ color: '#a08b7a' }}>
+                {t("Don't have an account?")}{' '}
+                <Link to="/register" className="font-semibold hover:opacity-70 transition-colors" style={{ color: '#c7a48a' }}>
+                  {t('Create Account')}
+                </Link>
+              </p>
+            </div>
+
+            {/* Vendor Login Link */}
+            <div className="text-center mt-4 pt-4" style={{ borderTop: '1px solid rgba(199,164,138,0.1)' }}>
+              <p className="text-xs" style={{ color: '#b9a18e' }}>
+                {t('Are you a vendor?')}{' '}
+                <Link to="/vendor/login" className="font-semibold hover:opacity-70 transition-colors" style={{ color: '#7e99c4' }}>
+                  {t('Vendor Login')}
+                </Link>
+              </p>
             </div>
           </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? t('signingIn') : t('signIn')}
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
-interface AvailabilitySlot {
+interface BlockedDate {
   id: number;
   service_id: number;
   date: string;
-  status: 'available' | 'unavailable' | 'booked';
-  notes?: string;
+  is_available: boolean;
+  current_bookings: number;
 }
 
 interface Service {
@@ -20,339 +19,347 @@ interface AvailabilityManagementProps {
 }
 
 const AvailabilityManagement: React.FC<AvailabilityManagementProps> = ({ vendorId }) => {
-  const { t } = useTranslation();
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<number | null>(null);
-  const [availability, setAvailability] = useState<AvailabilitySlot[]>([]);
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<'available' | 'unavailable'>('available');
-  const [notes, setNotes] = useState('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  // Fetch vendor services
-  useEffect(() => {
-    fetchServices();
-  }, [vendorId]);
+  // Pending changes (not yet saved)
+  const [pendingBlocks, setPendingBlocks] = useState<Set<string>>(new Set());
+  const [pendingUnblocks, setPendingUnblocks] = useState<Set<string>>(new Set());
+  const [saving, setSaving] = useState(false);
 
-  // Fetch availability when service is selected
-  useEffect(() => {
-    if (selectedService) {
-      fetchAvailability();
-    }
-  }, [selectedService, currentMonth]);
+  useEffect(() => { fetchServices(); }, [vendorId]);
+  useEffect(() => { if (selectedService) fetchAvailability(); }, [selectedService, currentMonth]);
+
+  // Reset pending when service changes
+  useEffect(() => { setPendingBlocks(new Set()); setPendingUnblocks(new Set()); }, [selectedService]);
 
   const fetchServices = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/services/vendor/${vendorId}`);
-      const data = await response.json();
-      setServices(data);
-      if (data.length > 0) {
-        setSelectedService(data[0].id);
+      const token = localStorage.getItem('vendorToken');
+      const res = await fetch('http://localhost:5000/api/vendor/services', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : [];
+        setServices(list);
+        if (list.length > 0) setSelectedService(list[0].id);
       }
-    } catch (error) {
-      console.error('Error fetching services:', error);
-    }
+    } catch (err) { console.error('Error:', err); }
+    finally { setLoading(false); }
   };
 
   const fetchAvailability = async () => {
     if (!selectedService) return;
-    
     try {
-      setLoading(true);
-      const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString().split('T')[0];
-      const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString().split('T')[0];
-      
-      const response = await fetch(
-        `http://localhost:5000/api/services/${selectedService}/availability?startDate=${startDate}&endDate=${endDate}`
-      );
-      const data = await response.json();
-      setAvailability(data);
-    } catch (error) {
-      console.error('Error fetching availability:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSetAvailability = async () => {
-    if (!selectedService || !selectedDate) return;
-
-    try {
-      const response = await fetch(`http://localhost:5000/api/services/${selectedService}/availability`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          date: selectedDate,
-          status: selectedStatus,
-          notes: notes
-        })
+      const token = localStorage.getItem('vendorToken');
+      const res = await fetch(`http://localhost:5000/api/availability/service/${selectedService}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-
-      if (response.ok) {
-        fetchAvailability();
-        setSelectedDate('');
-        setNotes('');
-        alert(t('Availability updated successfully'));
+      if (res.ok) {
+        const data = await res.json();
+        setBlockedDates(Array.isArray(data) ? data : []);
       }
-    } catch (error) {
-      console.error('Error setting availability:', error);
-      alert(t('Failed to update availability'));
+    } catch (err) { console.error('Error:', err); }
+  };
+
+  const saveChanges = async () => {
+    if (!selectedService) return;
+    setSaving(true);
+    const token = localStorage.getItem('vendorToken');
+
+    try {
+      // 1. Block new dates
+      if (pendingBlocks.size > 0) {
+        await fetch(`http://localhost:5000/api/availability/service/${selectedService}/bulk`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ dates: Array.from(pendingBlocks), status: 'blocked' })
+        });
+      }
+
+      // 2. Unblock dates (delete from DB)
+      const unblockArray = Array.from(pendingUnblocks);
+      for (let i = 0; i < unblockArray.length; i++) {
+        await fetch(`http://localhost:5000/api/availability/service/${selectedService}/${unblockArray[i]}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+
+      // Reset and reload
+      setPendingBlocks(new Set());
+      setPendingUnblocks(new Set());
+      await fetchAvailability();
+      alert('Availability saved successfully!');
+    } catch (err) {
+      console.error('Error saving:', err);
+      alert('Failed to save changes');
+    }
+    setSaving(false);
+  };
+
+  // Calendar helpers — use local dates to avoid timezone issues
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+
+  const todayStr = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
+
+  const getDateStr = (day: number) => {
+    return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  };
+
+  // Parse DB date to local YYYY-MM-DD (avoiding timezone shift)
+  const parseDbDate = (d: string) => {
+    const date = new Date(d);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  };
+
+  const getDateInfo = (dateStr: string) => {
+    const dbEntry = blockedDates.find(b => parseDbDate(b.date) === dateStr);
+
+    // Check pending changes first
+    if (pendingBlocks.has(dateStr)) return 'pending-block';
+    if (pendingUnblocks.has(dateStr)) return 'available'; // will become available after save
+
+    if (dbEntry) {
+      if (dbEntry.current_bookings > 0) return 'booked';
+      if (!dbEntry.is_available) return 'blocked';
+      return 'available'; // is_available = true in DB (shouldn't happen with new logic, but handle it)
+    }
+
+    return 'available'; // Default: all dates are available
+  };
+
+  const handleDayClick = (day: number) => {
+    const dateStr = getDateStr(day);
+    if (dateStr < todayStr) return;
+
+    const info = getDateInfo(dateStr);
+    if (info === 'booked') return; // Can't change booked dates
+
+    const dbEntry = blockedDates.find(b => parseDbDate(b.date) === dateStr);
+
+    if (info === 'available' || info === 'pending-block') {
+      // If it's pending-block, undo it
+      if (pendingBlocks.has(dateStr)) {
+        setPendingBlocks(prev => { const n = new Set(prev); n.delete(dateStr); return n; });
+        return;
+      }
+      // If it was unblocked (pending), undo the unblock
+      if (pendingUnblocks.has(dateStr)) {
+        setPendingUnblocks(prev => { const n = new Set(prev); n.delete(dateStr); return n; });
+        return;
+      }
+      // Available → Block it
+      setPendingBlocks(prev => new Set(prev).add(dateStr));
+    } else if (info === 'blocked') {
+      // Blocked → Unblock it
+      setPendingUnblocks(prev => new Set(prev).add(dateStr));
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-100 text-green-700 border-green-300';
-      case 'unavailable':
-        return 'bg-red-100 text-red-700 border-red-300';
-      case 'booked':
-        return 'bg-purple-100 text-purple-700 border-purple-300';
-      default:
-        return 'bg-gray-100 text-gray-700 border-gray-300';
-    }
-  };
+  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'available':
-        return t('Available');
-      case 'unavailable':
-        return t('Not Available');
-      case 'booked':
-        return t('Booked');
-      default:
-        return status;
-    }
-  };
+  const hasChanges = pendingBlocks.size > 0 || pendingUnblocks.size > 0;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('de-DE', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
+  // Count stats
+  const blockedCount = blockedDates.filter(d => !d.is_available && d.current_bookings === 0).length;
+  const bookedCount = blockedDates.filter(d => d.current_bookings > 0).length;
 
-  const changeMonth = (delta: number) => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + delta, 1));
-  };
-
-  const getMonthDisplay = () => {
-    return currentMonth.toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: 'long'
-    });
-  };
-
-  // Generate calendar days for current month
-  const generateCalendarDays = () => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    const days = [];
-    
-    // Add empty cells for days before month starts
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-    
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      const dateString = date.toISOString().split('T')[0];
-      const slot = availability.find(a => a.date === dateString);
-      days.push({ day, date: dateString, slot });
-    }
-    
-    return days;
-  };
-
-  if (loading && services.length === 0) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="flex items-center justify-center py-16">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
+
+  if (services.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+        <p className="text-gray-500 text-lg mb-2">No services found</p>
+        <p className="text-gray-400 text-sm">Add services first before managing availability.</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 text-white shadow-xl">
-        <h2 className="text-2xl font-bold mb-2">📅 {t('Availability Management')}</h2>
-        <p className="text-purple-100">{t('Manage your service availability and bookings')}</p>
-      </div>
-
-      {/* Service Selector */}
-      <div className="bg-white rounded-xl p-6 shadow-md">
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          {t('Select Service')}
-        </label>
-        <select
-          value={selectedService || ''}
-          onChange={(e) => setSelectedService(Number(e.target.value))}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
-        >
-          {services.map((service) => (
-            <option key={service.id} value={service.id}>
-              {service.name} ({service.category})
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Set Availability Form */}
-      <div className="bg-white rounded-xl p-6 shadow-md">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">{t('Set Availability')}</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      {/* Service Selector + Stats */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              {t('Date')}
-            </label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              {t('Status')}
-            </label>
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value as 'available' | 'unavailable')}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
-            >
-              <option value="available">{t('Available')}</option>
-              <option value="unavailable">{t('Not Available')}</option>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Select Service</label>
+            <select value={selectedService || ''} onChange={e => setSelectedService(Number(e.target.value))}
+              className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 min-w-[280px]">
+              {services.map(s => (
+                <option key={s.id} value={s.id}>{s.name} ({s.category})</option>
+              ))}
             </select>
           </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              {t('Notes')} ({t('optional')})
-            </label>
-            <input
-              type="text"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={t('Add notes')}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
-            />
+          <div className="flex gap-4 text-sm">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-red-500">{blockedCount}</p>
+              <p className="text-gray-400">Blocked</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-blue-500">{bookedCount}</p>
+              <p className="text-gray-400">Booked</p>
+            </div>
           </div>
         </div>
-
-        <button
-          onClick={handleSetAvailability}
-          disabled={!selectedDate}
-          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
-        >
-          {t('Update Availability')}
-        </button>
       </div>
 
-      {/* Calendar View */}
-      <div className="bg-white rounded-xl p-6 shadow-md">
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={() => changeMonth(-1)}
-            className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 font-medium transition-colors"
-          >
-            ← {t('Previous')}
+      {/* Legend */}
+      <div className="flex flex-wrap gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-white border border-gray-200"></div>
+          <span className="text-gray-600">Available (default)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-red-400"></div>
+          <span className="text-gray-600">Blocked by you</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-blue-400"></div>
+          <span className="text-gray-600">Booked by client</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-red-200 border-2 border-dashed border-red-400"></div>
+          <span className="text-gray-600">Will be blocked (unsaved)</span>
+        </div>
+      </div>
+
+      {/* Calendar */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div className="flex items-center justify-between mb-5">
+          <button onClick={prevMonth} className="p-2 rounded-lg hover:bg-gray-100 transition">
+            <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
           </button>
-          <h3 className="text-xl font-bold text-gray-800">{getMonthDisplay()}</h3>
-          <button
-            onClick={() => changeMonth(1)}
-            className="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 font-medium transition-colors"
-          >
-            {t('Next')} →
+          <h3 className="text-lg font-semibold text-gray-900">
+            {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          </h3>
+          <button onClick={nextMonth} className="p-2 rounded-lg hover:bg-gray-100 transition">
+            <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
 
-        {/* Calendar Grid */}
-        <div className="grid grid-cols-7 gap-2">
-          {/* Day headers */}
-          {[t('Sunday'), t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday')].map((day) => (
-            <div key={day} className="text-center font-semibold text-gray-600 py-2">
-              {day.substring(0, 3)}
-            </div>
+        <div className="grid grid-cols-7 gap-1.5 mb-2">
+          {weekDays.map(d => (
+            <div key={d} className="text-center text-xs font-semibold text-gray-400 py-2">{d}</div>
           ))}
-          
-          {/* Calendar days */}
-          {generateCalendarDays().map((dayInfo, index) => {
-            if (!dayInfo) {
-              return <div key={`empty-${index}`} className="aspect-square"></div>;
+        </div>
+
+        <div className="grid grid-cols-7 gap-1.5">
+          {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+            <div key={`e-${i}`} className="h-16"></div>
+          ))}
+
+          {Array.from({ length: daysInMonth }).map((_, i) => {
+            const day = i + 1;
+            const dateStr = getDateStr(day);
+            const isPast = dateStr < todayStr;
+            const isToday = dateStr === todayStr;
+            const info = getDateInfo(dateStr);
+
+            let bg = 'bg-white border border-gray-150 hover:border-purple-300';
+            let text = 'text-gray-800';
+            let label = '';
+            let icon = '';
+            let extraClass = '';
+
+            switch (info) {
+              case 'available':
+                bg = 'bg-white border border-gray-150 hover:border-purple-300 hover:bg-purple-50';
+                label = '';
+                break;
+              case 'blocked':
+                bg = 'bg-red-100 border border-red-300';
+                text = 'text-red-700';
+                label = 'Blocked';
+                icon = '✗';
+                break;
+              case 'booked':
+                bg = 'bg-blue-100 border border-blue-300';
+                text = 'text-blue-700';
+                label = 'Booked';
+                icon = '📅';
+                break;
+              case 'pending-block':
+                bg = 'bg-red-50 border-2 border-dashed border-red-400';
+                text = 'text-red-500';
+                label = 'Will block';
+                icon = '✗';
+                extraClass = 'animate-pulse';
+                break;
             }
 
-            const { day, date, slot } = dayInfo;
-            const isToday = date === new Date().toISOString().split('T')[0];
-            
+            if (isPast) {
+              bg = 'bg-gray-50 border border-gray-100';
+              text = 'text-gray-300';
+              label = '';
+              icon = '';
+            }
+
+            const todayRing = isToday ? 'ring-2 ring-purple-500 ring-offset-1' : '';
+
             return (
-              <div
-                key={date}
-                className={`aspect-square border-2 rounded-lg p-2 text-center ${
-                  isToday ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
-                } ${slot ? getStatusColor(slot.status) : 'bg-white hover:bg-gray-50'} transition-colors cursor-pointer`}
-                onClick={() => setSelectedDate(date)}
-              >
-                <div className="text-sm font-semibold">{day}</div>
-                {slot && (
-                  <div className="text-xs mt-1">
-                    {getStatusLabel(slot.status)}
-                  </div>
-                )}
-              </div>
+              <button key={day} onClick={() => handleDayClick(day)}
+                disabled={isPast || info === 'booked'}
+                className={`h-16 rounded-xl flex flex-col items-center justify-center transition-all ${bg} ${text} ${todayRing} ${extraClass} ${
+                  isPast || info === 'booked' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                }`}>
+                <span className="text-sm font-semibold">{day}</span>
+                {icon && <span className="text-[10px] leading-none mt-0.5">{icon}</span>}
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* Availability List */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-          <h3 className="text-lg font-bold text-gray-800">{t('Current Month Availability')}</h3>
+      {/* Save Bar */}
+      {hasChanges && (
+        <div className="bg-amber-50 rounded-xl border border-amber-200 p-5 flex items-center justify-between flex-wrap gap-3 sticky bottom-4">
+          <div>
+            <p className="font-semibold text-amber-900">Unsaved Changes</p>
+            <p className="text-sm text-amber-700">
+              {pendingBlocks.size > 0 && <span>{pendingBlocks.size} date(s) to block. </span>}
+              {pendingUnblocks.size > 0 && <span>{pendingUnblocks.size} date(s) to unblock. </span>}
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => { setPendingBlocks(new Set()); setPendingUnblocks(new Set()); }}
+              className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition">
+              Discard
+            </button>
+            <button onClick={saveChanges} disabled={saving}
+              className="px-6 py-2.5 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50">
+              {saving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         </div>
-        
-        {availability.length === 0 ? (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            <p className="text-gray-500 text-lg">{t('No availability set for this month')}</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-200">
-            {availability.map((slot) => (
-              <div key={slot.id} className="p-4 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-800">{formatDate(slot.date)}</p>
-                    {slot.notes && (
-                      <p className="text-sm text-gray-500 mt-1">{slot.notes}</p>
-                    )}
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(slot.status)}`}>
-                    {getStatusLabel(slot.status)}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+      )}
+
+      {/* Instructions */}
+      <div className="bg-gray-50 rounded-xl p-5 text-sm text-gray-500">
+        <p className="font-medium text-gray-700 mb-2">How it works:</p>
+        <p>All dates are <strong>available by default</strong>. Click a date to mark it as <span className="text-red-600 font-medium">Blocked</span> (you're not available). Click a blocked date to unblock it. Changes are not saved until you press <strong>Save Changes</strong>.</p>
+        <p className="mt-1"><span className="text-blue-600 font-medium">Booked</span> dates are set automatically when a client books your service and cannot be changed.</p>
       </div>
     </div>
   );

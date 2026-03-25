@@ -1,56 +1,98 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { WeddingRingIcon, MessageIcon, UserIcon, SettingsIcon } from './icons';
 
 const Footer: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="bg-transparent text-white py-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer style={{ background: 'linear-gradient(180deg, #f4e9dc 0%, #eaddd0 100%)' }}>
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+          {/* Brand */}
           <div>
-            <div className="flex items-center mb-4">
-              <WeddingRingIcon className="icon-primary mr-2" size={24} />
-              <h3 className="text-xl font-bold">{t('weddingMarketplace')}</h3>
-            </div>
-            <p className="text-white/80">{t('footerDescription')}</p>
+            <h3 className="font-playfair text-2xl font-semibold mb-3" style={{ color: '#c7a48a' }}>ONEDAY</h3>
+            <p className="text-sm leading-relaxed" style={{ color: '#a08b7a' }}>
+              {t('Your one-stop wedding marketplace. Find, compare and book the best wedding vendors.')}
+            </p>
           </div>
-          
+
+          {/* For Clients */}
           <div>
-            <h4 className="font-semibold mb-4">{t('forClients')}</h4>
-            <ul className="space-y-2 text-white/80">
-              <li><Link to="/browse-services" className="hover:text-white transition">{t('browseServices') || 'Browse Services'}</Link></li>
-              <li><Link to="/create-wishlist" className="hover:text-white transition">{t('createWishlist') || 'Create Wishlist'}</Link></li>
-              <li><Link to="/compare" className="hover:text-white transition">{t('compareOffers') || 'Compare Offers'}</Link></li>
-              <li><Link to="/book-services" className="hover:text-white transition">{t('bookServices') || 'Book Services'}</Link></li>
+            <h4 className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: '#c7a48a' }}>
+              {t('For Clients')}
+            </h4>
+            <ul className="space-y-2.5">
+              {[
+                { to: '/categories', label: t('Browse Vendors') },
+                { to: '/search', label: t('Compare Services') },
+                { to: '/client/dashboard/wishlist', label: t('Wishlist') },
+                { to: '/client/dashboard/wedding', label: t('Wedding Planner') },
+              ].map(item => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm transition-colors hover:opacity-70" style={{ color: '#a08b7a' }}>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-          
+
+          {/* For Vendors */}
           <div>
-            <h4 className="font-semibold mb-4">{t('forProviders')}</h4>
-            <ul className="space-y-2 text-white/80">
-              <li><Link to="/vendor/register" className="hover:text-white transition">{t('createProfile') || 'Create Profile'}</Link></li>
-              <li><Link to="/vendor/dashboard" className="hover:text-white transition">{t('manageAvailability') || 'Manage Availability'}</Link></li>
-              <li><Link to="/vendor/dashboard" className="hover:text-white transition">{t('offerPackages') || 'Offer Packages'}</Link></li>
-              <li><Link to="/vendor/dashboard" className="hover:text-white transition">{t('viewStatistics') || 'View Statistics'}</Link></li>
+            <h4 className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: '#c7a48a' }}>
+              {t('For Vendors')}
+            </h4>
+            <ul className="space-y-2.5">
+              {[
+                { to: '/vendor/register', label: t('Create Profile') },
+                { to: '/vendor/dashboard', label: t('Manage Services') },
+                { to: '/vendor/dashboard', label: t('View Bookings') },
+                { to: '/vendor/dashboard', label: t('Analytics') },
+              ].map(item => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm transition-colors hover:opacity-70" style={{ color: '#a08b7a' }}>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
-          
+
+          {/* Support */}
           <div>
-            <h4 className="font-semibold mb-4">{t('forPlanners')}</h4>
-            <ul className="space-y-2 text-white/80">
-              <li><Link to="/about" className="hover:text-white transition">{t('plannerBenefits') || 'Planner Benefits'}</Link></li>
-              <li><Link to="/planner/dashboard" className="hover:text-white transition">{t('createBundles') || 'Create Bundles'}</Link></li>
-              <li><Link to="/about" className="hover:text-white transition">{t('noCommission') || 'No Commission'}</Link></li>
-              <li><Link to="/planner/dashboard" className="hover:text-white transition">{t('plannerTools') || 'Planner Tools'}</Link></li>
+            <h4 className="text-xs font-semibold uppercase tracking-widest mb-5" style={{ color: '#c7a48a' }}>
+              {t('Support')}
+            </h4>
+            <ul className="space-y-2.5">
+              {[
+                { to: '/about', label: t('About Us') },
+                { to: '/about', label: t('Contact') },
+                { to: '/about', label: t('Terms of Service') },
+                { to: '/about', label: t('Privacy Policy') },
+              ].map(item => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm transition-colors hover:opacity-70" style={{ color: '#a08b7a' }}>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-        
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-white/80">
-          <p>{t('copyright')}</p>
+
+        {/* Bottom Bar */}
+        <div className="mt-14 pt-6 flex flex-wrap items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(199,164,138,0.25)' }}>
+          <p className="text-xs" style={{ color: '#b9a18e' }}>
+            © {new Date().getFullYear()} ONEDAY. All rights reserved.
+          </p>
+          <div className="flex gap-5">
+            {['Instagram', 'Facebook', 'Pinterest'].map(social => (
+              <a key={social} href="#" className="text-xs transition-colors hover:opacity-70" style={{ color: '#b9a18e' }}>
+                {social}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

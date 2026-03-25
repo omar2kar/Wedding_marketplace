@@ -1,20 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CategoryCard from '../components/CategoryCard';
 import { Link } from 'react-router-dom';
-import { CameraIcon, VideoCameraIcon, FlowerIcon, ChefHatIcon, LocationIcon, SparkleIcon, MicrophoneIcon, CakeIcon, ClipboardIcon } from '../components/icons';
-
-// If you don't have a dress icon, we define a simple one here:
-const DressIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 6s2 1 4 1 3-1 3-1 1.2 0 3 1 4-1 4-1-1 8-4 11c0 0-2 3-3 3s-3-3-3-3C7 20 5 17 4 11 3 8 3 6 3 6z" />
-  </svg>
-);
+import { CameraIcon, VideoCameraIcon, FlowerIcon, LocationIcon, SparkleIcon, MicrophoneIcon, CakeIcon, ClipboardIcon } from '../components/icons';
 
 const Categories: React.FC = () => {
   const { t } = useTranslation();
 
-  // Categories index - each item can contain a link that leads to the search page with a category filter
   const categories = [
     { id: 'photography', title: t('Photography'), subtitle: t('Capture the Moment'), icon: <CameraIcon />, to: '/search?category=Photography' },
     { id: 'videography', title: t('Videography'), subtitle: t('Video Coverage'), icon: <VideoCameraIcon />, to: '/search?category=Videography' },
@@ -27,18 +18,66 @@ const Categories: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-center mb-10">
-        <h2 className="font-playfair text-4xl md:text-5xl font-semibold">{t('What are you looking for?')}</h2>
-        <p className="mt-3 text-gray-600 max-w-2xl mx-auto">{t('Browse categories to find the right vendors for your special day.')}</p>
-      </div>
+    <div style={{ background: '#f4e9dc', minHeight: '100vh', paddingTop: '100px' }}>
+      <div className="max-w-5xl mx-auto px-6 py-16">
+        {/* Header */}
+        <div className="text-center mb-14">
+          <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: '#c7a48a' }}>
+            {t('Categories')}
+          </p>
+          <h1 className="font-playfair text-4xl md:text-5xl mb-4" style={{ color: '#1a1a2e', fontWeight: 500 }}>
+            {t('What are you looking for?')}
+          </h1>
+          <p className="text-base max-w-xl mx-auto" style={{ color: '#a08b7a' }}>
+            {t('Browse categories to find the right vendors for your special day.')}
+          </p>
+        </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        {categories.map((c) => (
-          <Link key={c.id} to={c.to} className="block">
-            <CategoryCard title={c.title} subtitle={c.subtitle} icon={c.icon} to={c.to} />
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          {categories.map((cat, i) => (
+            <Link key={cat.id} to={cat.to}
+              className="group flex flex-col items-center py-10 px-5 rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+              style={{
+                background: '#ffffff',
+                border: '1px solid rgba(199,164,138,0.15)',
+                animationDelay: `${i * 60}ms`
+              }}>
+              {/* Icon */}
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110"
+                style={{ background: 'rgba(232,197,151,0.1)' }}>
+                <div className="w-8 h-8" style={{ color: '#e8c597' }}>{cat.icon}</div>
+              </div>
+
+              {/* Title */}
+              <h3 className="font-playfair font-medium text-lg mb-1" style={{ color: '#1a1a2e' }}>
+                {cat.title}
+              </h3>
+
+              {/* Subtitle */}
+              <p className="text-xs" style={{ color: '#b9a18e' }}>{cat.subtitle}</p>
+
+              {/* Bottom accent line */}
+              <div className="mt-4 w-8 h-0.5 rounded-full transition-all duration-300 group-hover:w-12"
+                style={{ background: '#e8c597' }}></div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Wedding Planner CTA */}
+        <div className="mt-16 text-center rounded-2xl py-14 px-8" style={{ background: '#ffffff', border: '1px solid rgba(199,164,138,0.15)' }}>
+          <p className="font-playfair text-2xl md:text-3xl mb-2" style={{ color: '#1a1a2e', fontWeight: 500 }}>
+            {t('Sit back and let a professional handle it.')}
+          </p>
+          <p className="font-playfair text-xl mb-6" style={{ color: '#c7a48a' }}>
+            {t('Hire a Wedding Planner')}
+          </p>
+          <Link to="/search?category=Planning"
+            className="inline-block px-8 py-3 rounded-lg text-white font-semibold transition-all hover:opacity-90 hover:shadow-lg"
+            style={{ background: '#c7a48a' }}>
+            {t('Browse Planners')}
           </Link>
-        ))}
+        </div>
       </div>
     </div>
   );
