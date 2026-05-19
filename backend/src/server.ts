@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import reviews from './routes/reviews';
 import vendorAuth from './routes/vendorAuth';
 import adminAuth from './routes/adminAuth';
@@ -28,13 +28,32 @@ import imageUpload from './routes/imageUpload';
 import imageRoutes from './routes/imageRoutes';
 // import { apiRateLimit } from './middleware/rateLimiting';
 
-dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+// CORS Configuration — يقبل فقط من الـ frontend الرسمي
+const allowedOrigins = [
+  process.env.FRONTEND_URL,           // من .env (production)
+  'http://localhost:3000',            // development
+].filter(Boolean) as string[];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // السماح بطلبات بدون origin (مثل Postman, curl, mobile apps)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`⚠️  CORS blocked request from: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
