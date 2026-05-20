@@ -12,9 +12,11 @@ const mysql = require('mysql2/promise');
 // Database configuration
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT) || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'wedding_marketplace'
+    database: process.env.DB_NAME || 'wedding_marketplace',
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
 };
 
 /**
