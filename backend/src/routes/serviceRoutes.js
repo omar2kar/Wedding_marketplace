@@ -119,8 +119,9 @@ router.get('/', async (req, res) => {
         }
 
         query += ` ORDER BY v.rating DESC, v.created_at DESC`;
-        query += ` LIMIT ? OFFSET ?`;
-        params.push(Number(limit), Number(offset));
+        const limitNum = Number.isInteger(Number(limit)) ? Number(limit) : 50;
+        const offsetNum = Number.isInteger(Number(offset)) ? Number(offset) : 0;
+        query += ` LIMIT ${limitNum} OFFSET ${offsetNum}`;
 
         console.log('Executing vendor query with params:', params);
         console.log('Final query:', query);
