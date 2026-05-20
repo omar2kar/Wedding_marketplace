@@ -165,8 +165,7 @@ router.get('/services', async (req, res) => {
         const totalPages = Math.ceil(totalItems / parseInt(limit));
 
         // Add pagination
-        query += ` LIMIT ? OFFSET ?`;
-        params.push(parseInt(limit), offset);
+        query += ` LIMIT ${Number(limit)||50} OFFSET ${Number(offset)||0}`;
 
         // Execute main query
         const [results] = await connection.execute(query, params);

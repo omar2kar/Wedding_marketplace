@@ -111,8 +111,7 @@ router.get('/', async (req, res) => {
             params.push(category);
         }
         
-        query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
-        params.push(parseInt(limit), parseInt(offset));
+        query += ` ORDER BY created_at DESC LIMIT ${Number(limit)||50} OFFSET ${Number(offset)||0}`;
         
         const [reports] = await connection.execute(query, params);
         

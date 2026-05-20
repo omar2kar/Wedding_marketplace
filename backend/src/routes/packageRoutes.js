@@ -307,8 +307,8 @@ router.get('/popular', async (req, res) => {
              JOIN vendors v ON vs.vendor_id = v.id
              WHERE sp.is_active = 1 AND sp.is_popular = 1 AND vs.is_active = 1 AND v.is_active = 1
              ORDER BY v.average_rating DESC, sp.price
-             LIMIT ?`,
-            [parseInt(limit)]
+             LIMIT ${Number(limit)||50}`,
+            []
         );
 
         // Parse JSON features

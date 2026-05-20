@@ -191,8 +191,8 @@ router.get('/conversation/:conversationId/messages', async (req, res) => {
              FROM messages m
              WHERE m.conversation_id = ?
              ORDER BY m.created_at DESC
-             LIMIT ? OFFSET ?`,
-            [conversationId, parseInt(limit), parseInt(offset)]
+             LIMIT ${Number(limit)||50} OFFSET ${Number(offset)||0}`,
+            [conversationId]
         );
 
         // Mark messages as read based on who's requesting
