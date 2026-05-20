@@ -7,13 +7,6 @@ interface VendorPayload {
   type: 'vendor';
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      vendor?: VendorPayload;
-    }
-  }
-}
 
 const allowDemo = process.env.ALLOW_DEMO_LOGIN === 'true';
 
