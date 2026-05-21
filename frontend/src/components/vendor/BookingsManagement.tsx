@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { API_BASE } from '../../config/api';
 
 interface Booking {
   id: number;
@@ -59,8 +60,8 @@ const BookingsManagement: React.FC<BookingsManagementProps> = ({ vendorId }) => 
   const fetchBookings = async () => {
     try {
       const url = filter === 'all' 
-        ? `http://localhost:5000/api/bookings/vendor/${vendorId}`
-        : `http://localhost:5000/api/bookings/vendor/${vendorId}?status=${filter}`;
+        ? `${API_BASE}/bookings/vendor/${vendorId}`
+        : `${API_BASE}/bookings/vendor/${vendorId}?status=${filter}`;
       
       const response = await fetch(url);
       const data = await response.json();
@@ -74,7 +75,7 @@ const BookingsManagement: React.FC<BookingsManagementProps> = ({ vendorId }) => 
 
   const updateBookingStatus = async (bookingId: number, newStatus: string, notes?: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/status`, {
+      const response = await fetch(`${API_BASE}/bookings/${bookingId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus, vendorNotes: notes })
@@ -92,7 +93,7 @@ const BookingsManagement: React.FC<BookingsManagementProps> = ({ vendorId }) => 
   const fetchWeddingProfile = async (clientId: number) => {
     setWeddingLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/wedding-profile/vendor-view/${vendorId}/${clientId}`);
+      const res = await fetch(`${API_BASE}/wedding-profile/vendor-view/${vendorId}/${clientId}`);
       if (res.ok) {
         const data = await res.json();
         setWeddingData(data);

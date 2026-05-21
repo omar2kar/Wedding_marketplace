@@ -7,6 +7,7 @@ import ClientOrders from './ClientOrders';
 import ClientWishlist from './ClientWishlist';
 import ClientSettings from './ClientSettings';
 import WeddingProfile from './WeddingProfile';
+import { API_BASE } from '../../config/api';
 
 const ClientDashboard: React.FC = () => {
   const { client, isAuthenticated, isLoading } = useClient();
@@ -107,13 +108,13 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('clientToken');
-        const favRes = await fetch(`http://localhost:5000/api/favorites/count/${client.id}`, {
+        const favRes = await fetch(`${API_BASE}/favorites/count/${client.id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         let wishlistCount = 0;
         if (favRes.ok) { const d = await favRes.json(); wishlistCount = d.count; }
 
-        const bookRes = await fetch(`http://localhost:5000/api/bookings/client/${client.id}`);
+        const bookRes = await fetch(`${API_BASE}/bookings/client/${client.id}`);
         let totalOrders = 0, activeOrders = 0;
         if (bookRes.ok) {
           const d = await bookRes.json();

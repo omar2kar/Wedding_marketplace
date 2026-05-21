@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface SystemSetting {
   id: number;
@@ -48,7 +49,7 @@ const AdminSettings: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       
       if (activeTab === 'general') {
-        const response = await fetch('http://localhost:5000/api/admin/settings', {
+        const response = await fetch(`${API_BASE}/admin/settings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -56,7 +57,7 @@ const AdminSettings: React.FC = () => {
           setSettings(data.settings);
         }
       } else if (activeTab === 'commissions') {
-        const response = await fetch('http://localhost:5000/api/admin/settings/commissions', {
+        const response = await fetch(`${API_BASE}/admin/settings/commissions`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -64,7 +65,7 @@ const AdminSettings: React.FC = () => {
           setCommissions(data.commissions);
         }
       } else if (activeTab === 'emails') {
-        const response = await fetch('http://localhost:5000/api/admin/settings/email-templates', {
+        const response = await fetch(`${API_BASE}/admin/settings/email-templates`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -82,7 +83,7 @@ const AdminSettings: React.FC = () => {
   const updateSetting = async (setting: SystemSetting, newValue: string) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/settings/${setting.setting_key}`, {
+      const response = await fetch(`${API_BASE}/admin/settings/${setting.setting_key}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +107,7 @@ const AdminSettings: React.FC = () => {
   const updateCommission = async (category: string, rate: number) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/settings/commissions/${category}`, {
+      const response = await fetch(`${API_BASE}/admin/settings/commissions/${category}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +128,7 @@ const AdminSettings: React.FC = () => {
   const updateEmailTemplate = async (template: EmailTemplate) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/settings/email-templates/${template.id}`, {
+      const response = await fetch(`${API_BASE}/admin/settings/email-templates/${template.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

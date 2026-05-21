@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useClient } from '../context/ClientContext';
 import { useToast } from '../context/ToastContext';
 import { HeartIcon, StarIcon } from '../components/icons';
+import { API_BASE, SERVER_BASE } from '../config/api';
 
 interface Vendor {
   id: number;
@@ -61,7 +62,7 @@ const Search: React.FC = () => {
         if (minRating) params.append('minRating', minRating.toString());
         if (keyword) params.append('keyword', keyword);
 
-        const res = await fetch(`http://localhost:5000/api/services?${params}`);
+        const res = await fetch(`${API_BASE}/services?${params}`);
         if (!res.ok) throw new Error('Failed to fetch');
         const data = await res.json();
         setVendors(Array.isArray(data) ? data : []);
@@ -87,7 +88,7 @@ const Search: React.FC = () => {
   const getImg = (vendor: Vendor) => {
     if (imgErrors.has(vendor.id)) return null;
     if (!vendor.profileImage) return null;
-    return vendor.profileImage.startsWith('http') ? vendor.profileImage : `http://localhost:5000${vendor.profileImage.startsWith('/') ? '' : '/'}${vendor.profileImage}`;
+    return vendor.profileImage.startsWith('http') ? vendor.profileImage : `${SERVER_BASE}${vendor.profileImage.startsWith('/') ? '' : '/'}${vendor.profileImage}`;
   };
 
   const hasActiveFilters = category !== 'All' || minPrice || maxPrice || minRating > 0 || keyword;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_BASE, SERVER_BASE } from '../../config/api';
 
 interface Vendor {
   id: number;
@@ -33,8 +34,8 @@ const FeaturedVendorsAdmin: React.FC = () => {
     setLoading(true);
     try {
       const [featRes, allRes] = await Promise.all([
-        fetch('http://localhost:5000/api/featured-vendors'),
-        fetch('http://localhost:5000/api/featured-vendors/all-vendors')
+        fetch(`${API_BASE}/featured-vendors`),
+        fetch(`${API_BASE}/featured-vendors/all-vendors`)
       ]);
       if (featRes.ok) setFeatured(await featRes.json());
       if (allRes.ok) setAllVendors(await allRes.json());
@@ -44,7 +45,7 @@ const FeaturedVendorsAdmin: React.FC = () => {
 
   const addFeatured = async (vendorId: number) => {
     try {
-      const res = await fetch('http://localhost:5000/api/featured-vendors', {
+      const res = await fetch(`${API_BASE}/featured-vendors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vendorId })
@@ -55,7 +56,7 @@ const FeaturedVendorsAdmin: React.FC = () => {
 
   const removeFeatured = async (vendorId: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/featured-vendors/${vendorId}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE}/featured-vendors/${vendorId}`, { method: 'DELETE' });
       if (res.ok) loadData();
     } catch (err) { console.error(err); }
   };
@@ -66,7 +67,7 @@ const FeaturedVendorsAdmin: React.FC = () => {
     [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
     const order = newOrder.map((v, i) => ({ vendorId: v.id, displayOrder: i + 1 }));
     try {
-      await fetch('http://localhost:5000/api/featured-vendors/reorder', {
+      await fetch(`${API_BASE}/featured-vendors/reorder`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ order })
@@ -81,7 +82,7 @@ const FeaturedVendorsAdmin: React.FC = () => {
     [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
     const order = newOrder.map((v, i) => ({ vendorId: v.id, displayOrder: i + 1 }));
     try {
-      await fetch('http://localhost:5000/api/featured-vendors/reorder', {
+      await fetch(`${API_BASE}/featured-vendors/reorder`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ order })
@@ -134,7 +135,7 @@ const FeaturedVendorsAdmin: React.FC = () => {
                     {/* Avatar */}
                     <div className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden" style={{ background: 'linear-gradient(135deg, #c7a48a, #e8c597)' }}>
                       {vendor.profileImage ? (
-                        <img src={vendor.profileImage.startsWith('http') ? vendor.profileImage : `http://localhost:5000${vendor.profileImage}`}
+                        <img src={vendor.profileImage.startsWith('http') ? vendor.profileImage : `${SERVER_BASE}${vendor.profileImage}`}
                           alt="" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm">
@@ -190,7 +191,7 @@ const FeaturedVendorsAdmin: React.FC = () => {
                   <div key={vendor.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition">
                     <div className="w-10 h-10 rounded-lg flex-shrink-0 overflow-hidden bg-gray-200">
                       {vendor.profile_image ? (
-                        <img src={vendor.profile_image.startsWith('http') ? vendor.profile_image : `http://localhost:5000${vendor.profile_image}`}
+                        <img src={vendor.profile_image.startsWith('http') ? vendor.profile_image : `${SERVER_BASE}${vendor.profile_image}`}
                           alt="" className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold text-sm">

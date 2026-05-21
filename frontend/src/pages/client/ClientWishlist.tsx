@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useClient } from '../../context/ClientContext';
 import { useToast } from '../../context/ToastContext';
+import { API_BASE } from '../../config/api';
 
 interface WishlistItem {
   id: number;
@@ -55,7 +56,7 @@ const ClientWishlist: React.FC = () => {
       console.log('Fetching favorites for client ID:', client.id);
       console.log('Using token:', token ? 'Token exists' : 'No token');
       
-      const response = await fetch(`http://localhost:5000/api/favorites/${client.id}`, {
+      const response = await fetch(`${API_BASE}/favorites/${client.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -120,7 +121,7 @@ const ClientWishlist: React.FC = () => {
       if (isFavorite) {
         console.log('Removing from favorites...');
         // Remove from favorites
-        const response = await fetch(`http://localhost:5000/api/favorites/remove`, {
+        const response = await fetch(`${API_BASE}/favorites/remove`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -148,7 +149,7 @@ const ClientWishlist: React.FC = () => {
       } else {
         console.log('Adding to favorites...');
         // Add to favorites
-        const response = await fetch(`http://localhost:5000/api/favorites/add`, {
+        const response = await fetch(`${API_BASE}/favorites/add`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

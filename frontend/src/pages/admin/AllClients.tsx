@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface Client {
   id: number;
@@ -38,7 +39,7 @@ const AllClients: React.FC = () => {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
       
-      const response = await fetch(`http://localhost:5000/api/admin/clients?${params}`, {
+      const response = await fetch(`${API_BASE}/admin/clients?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -71,7 +72,7 @@ const AllClients: React.FC = () => {
       let response;
 
       if (action === 'delete') {
-        response = await fetch(`http://localhost:5000/api/admin/clients/${selectedClient.id}`, {
+        response = await fetch(`${API_BASE}/admin/clients/${selectedClient.id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -80,7 +81,7 @@ const AllClients: React.FC = () => {
           body: JSON.stringify({ notes })
         });
       } else {
-        response = await fetch(`http://localhost:5000/api/admin/clients/${selectedClient.id}/toggle-status`, {
+        response = await fetch(`${API_BASE}/admin/clients/${selectedClient.id}/toggle-status`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

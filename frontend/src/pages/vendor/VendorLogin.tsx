@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 const VendorLogin: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +37,7 @@ const VendorLogin: React.FC = () => {
 
     try {
       // Call real API endpoint
-      const response = await fetch('http://localhost:5000/api/vendor/login', {
+      const response = await fetch(`${API_BASE}/vendor/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SearchBar } from '../components/search/SearchBar';
+import { API_BASE, SERVER_BASE } from '../config/api';
 
 interface ServiceResult {
     id: number;
@@ -64,7 +65,7 @@ const SearchResults: React.FC = () => {
         });
 
         try {
-            const response = await fetch(`http://localhost:5000/api/search/services?${searchParams}`);
+            const response = await fetch(`${API_BASE}/search/services?${searchParams}`);
             const data = await response.json();
             
             if (data.success) {
@@ -191,7 +192,7 @@ const SearchResults: React.FC = () => {
                                         <div className="h-48 bg-gradient-to-br from-purple-600/20 to-pink-600/20">
                                             {service.primary_image ? (
                                                 <img
-                                                    src={`http://localhost:5000${service.primary_image}`}
+                                                    src={`${SERVER_BASE}${service.primary_image}`}
                                                     alt={service.name}
                                                     className="w-full h-full object-cover"
                                                 />

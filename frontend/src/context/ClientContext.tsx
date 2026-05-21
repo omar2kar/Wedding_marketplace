@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_BASE } from '../config/api';
 
 interface Client {
   id: number;
@@ -47,7 +48,7 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
       const token = localStorage.getItem('clientToken');
       if (token) {
         try {
-          const response = await fetch('http://localhost:5000/api/client/profile', {
+          const response = await fetch(`${API_BASE}/client/profile`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -89,7 +90,7 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:5000/api/client/login', {
+      const response = await fetch(`${API_BASE}/client/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -138,7 +139,7 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
     console.log('🚀 updateProfile called with:', JSON.stringify(data, null, 2));
 
     try {
-      const response = await fetch('http://localhost:5000/api/client/profile', {
+      const response = await fetch(`${API_BASE}/client/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -187,7 +188,7 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({ children }) => {
     if (!token) throw new Error('Not authenticated');
 
     try {
-      const response = await fetch('http://localhost:5000/api/client/change-password', {
+      const response = await fetch(`${API_BASE}/client/change-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

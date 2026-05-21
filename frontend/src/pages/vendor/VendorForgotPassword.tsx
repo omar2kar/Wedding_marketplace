@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { API_BASE } from '../../config/api';
 
 interface ForgotPasswordFormInputs {
   email: string;
@@ -14,7 +15,7 @@ const VendorForgotPassword: React.FC = () => {
   const onSubmit = async (data: ForgotPasswordFormInputs) => {
     try {
       // Call API endpoint for vendor password reset
-      const response = await fetch('http://localhost:5000/api/vendor/forgot-password', {
+      const response = await fetch(`${API_BASE}/vendor/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

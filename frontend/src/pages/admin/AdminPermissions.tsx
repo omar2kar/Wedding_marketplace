@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface Admin {
   id: number;
@@ -63,7 +64,7 @@ const AdminPermissions: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       
       // Fetch overview stats
-      const statsResponse = await fetch('http://localhost:5000/api/admin/permissions/overview', {
+      const statsResponse = await fetch(`${API_BASE}/admin/permissions/overview`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (statsResponse.ok) {
@@ -72,7 +73,7 @@ const AdminPermissions: React.FC = () => {
       }
 
       if (activeTab === 'admins') {
-        const response = await fetch('http://localhost:5000/api/admin/permissions/admins', {
+        const response = await fetch(`${API_BASE}/admin/permissions/admins`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -80,7 +81,7 @@ const AdminPermissions: React.FC = () => {
           setAdmins(data.admins);
         }
       } else if (activeTab === 'activity') {
-        const response = await fetch('http://localhost:5000/api/admin/permissions/activity-log', {
+        const response = await fetch(`${API_BASE}/admin/permissions/activity-log`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (response.ok) {
@@ -98,7 +99,7 @@ const AdminPermissions: React.FC = () => {
   const createAdmin = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/permissions/admins', {
+      const response = await fetch(`${API_BASE}/admin/permissions/admins`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ const AdminPermissions: React.FC = () => {
   const updateAdmin = async (admin: Admin) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/permissions/admins/${admin.id}`, {
+      const response = await fetch(`${API_BASE}/admin/permissions/admins/${admin.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

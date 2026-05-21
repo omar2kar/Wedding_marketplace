@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { API_BASE } from '../../config/api';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -48,7 +49,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
 
   const fetchUnavailableDates = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/availability/service/${service.id}`);
+      const res = await fetch(`${API_BASE}/availability/service/${service.id}`);
       if (res.ok) {
         const data = await res.json();
         const blocked = (Array.isArray(data) ? data : [])
@@ -107,7 +108,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const response = await fetch(`${API_BASE}/bookings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

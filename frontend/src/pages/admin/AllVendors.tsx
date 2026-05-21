@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface Vendor {
   id: number;
@@ -52,7 +53,7 @@ const AllVendors: React.FC = () => {
       if (filters.status) params.append('status', filters.status);
       if (filters.category) params.append('category', filters.category);
       
-      const response = await fetch(`http://localhost:5000/api/admin/vendors?${params}`, {
+      const response = await fetch(`${API_BASE}/admin/vendors?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -82,7 +83,7 @@ const AllVendors: React.FC = () => {
     setProcessing(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/vendors/${selectedVendor.id}/${action}`, {
+      const response = await fetch(`${API_BASE}/admin/vendors/${selectedVendor.id}/${action}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

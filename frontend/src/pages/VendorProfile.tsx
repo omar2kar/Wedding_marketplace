@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useClient } from '../context/ClientContext';
 import BookingModal from '../components/booking/BookingModal';
+import { API_BASE, SERVER_BASE } from '../config/api';
 
 interface ServicePackage { id: number; name: string; description: string; price: number; features: string[]; }
 interface VendorService { id: number; name: string; description: string; category: string; price: number; images: string[]; isActive: boolean; packages: ServicePackage[]; }
@@ -41,7 +42,7 @@ const VendorProfile: React.FC = () => {
   const fetchVendor = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/services/vendor/${id}`);
+      const res = await fetch(`${API_BASE}/services/vendor/${id}`);
       const data = await res.json();
       if (res.ok) setVendor(data);
     } catch (err) { console.error(err); }
@@ -50,7 +51,7 @@ const VendorProfile: React.FC = () => {
 
   const getImg = (path: string) => {
     if (imgErrors.has(path)) return null;
-    return path.startsWith('http') ? path : `http://localhost:5000${path.startsWith('/') ? '' : '/'}${path}`;
+    return path.startsWith('http') ? path : `${SERVER_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
   };
 
   const handleBook = (service: VendorService) => { setBookingService(service); setShowBooking(true); };

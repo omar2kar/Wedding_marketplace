@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { API_BASE, SERVER_BASE } from '../config/api';
 
 interface Vendor {
   id: number;
@@ -38,8 +39,8 @@ const BrowseServices: React.FC = () => {
     try {
       setLoading(true);
       const url = selectedCategory === 'All' 
-        ? 'http://localhost:5000/api/services'
-        : `http://localhost:5000/api/services?category=${encodeURIComponent(selectedCategory)}`;
+        ? `${API_BASE}/services`
+        : `${API_BASE}/services?category=${encodeURIComponent(selectedCategory)}`;
       
       const response = await fetch(url);
       const data = await response.json();
@@ -120,7 +121,7 @@ const BrowseServices: React.FC = () => {
                   <div className="h-48 bg-white/20 rounded-lg mb-4 overflow-hidden">
                     {vendor.profileImage ? (
                       <img 
-                        src={`http://localhost:5000${vendor.profileImage}`}
+                        src={`${SERVER_BASE}${vendor.profileImage}`}
                         alt={vendor.businessName}
                         className="w-full h-full object-cover"
                         onError={(e) => {

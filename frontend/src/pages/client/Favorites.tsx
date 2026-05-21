@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { HeartIcon, StarIcon, LocationIcon } from '../../components/icons';
+import { API_BASE } from '../../config/api';
 
 interface Favorite {
   id: number;
@@ -40,7 +41,7 @@ const Favorites: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`http://localhost:5000/api/favorites/client/${clientId}`);
+      const response = await fetch(`${API_BASE}/favorites/client/${clientId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch favorites');
       }
@@ -57,7 +58,7 @@ const Favorites: React.FC = () => {
 
   const removeFavorite = async (serviceId: number) => {
     try {
-      const response = await fetch('http://localhost:5000/api/favorites/remove', {
+      const response = await fetch(`${API_BASE}/favorites/remove`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

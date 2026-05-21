@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { StarIcon, LocationIcon, HeartIcon } from '../../components/icons';
+import { API_BASE } from '../../config/api';
 
 interface Service {
   id: number;
@@ -54,7 +55,7 @@ const Compare: React.FC = () => {
     const clientId = 1;
     
     try {
-      const response = await fetch('http://localhost:5000/api/favorites/add', {
+      const response = await fetch(`${API_BASE}/favorites/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

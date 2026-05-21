@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface ReportStats {
   totalRevenue: number;
@@ -58,7 +59,7 @@ const AdminReports: React.FC = () => {
         endDate: dateRange.endDate
       });
       
-      const response = await fetch(`http://localhost:5000/api/admin/reports?${params}`, {
+      const response = await fetch(`${API_BASE}/admin/reports?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

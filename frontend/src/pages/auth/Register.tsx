@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { API_BASE } from '../../config/api';
 
 interface RegisterFormInputs {
   name: string;
@@ -22,7 +23,7 @@ const Register: React.FC = () => {
   const onSubmit = async (data: RegisterFormInputs) => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/client/register', {
+      const response = await fetch(`${API_BASE}/client/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

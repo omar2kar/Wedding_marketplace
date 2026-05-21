@@ -1,3 +1,4 @@
+import { API_BASE } from '../config/api';
 export interface Service {
   id: number;
   name: string;
@@ -31,7 +32,7 @@ export interface Service {
   };
 }
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = `${API_BASE}`;
 
 export const getServiceById = async (id: number): Promise<Service> => {
   try {

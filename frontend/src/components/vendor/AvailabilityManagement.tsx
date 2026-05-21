@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from '../../config/api';
 
 interface BlockedDate {
   id: number;
@@ -39,7 +40,7 @@ const AvailabilityManagement: React.FC<AvailabilityManagementProps> = ({ vendorI
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem('vendorToken');
-      const res = await fetch('http://localhost:5000/api/vendor/services', {
+      const res = await fetch(`${API_BASE}/vendor/services`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -56,7 +57,7 @@ const AvailabilityManagement: React.FC<AvailabilityManagementProps> = ({ vendorI
     if (!selectedService) return;
     try {
       const token = localStorage.getItem('vendorToken');
-      const res = await fetch(`http://localhost:5000/api/availability/service/${selectedService}`, {
+      const res = await fetch(`${API_BASE}/availability/service/${selectedService}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -74,7 +75,7 @@ const AvailabilityManagement: React.FC<AvailabilityManagementProps> = ({ vendorI
     try {
       // 1. Block new dates
       if (pendingBlocks.size > 0) {
-        await fetch(`http://localhost:5000/api/availability/service/${selectedService}/bulk`, {
+        await fetch(`${API_BASE}/availability/service/${selectedService}/bulk`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ dates: Array.from(pendingBlocks), status: 'blocked' })
@@ -84,7 +85,7 @@ const AvailabilityManagement: React.FC<AvailabilityManagementProps> = ({ vendorI
       // 2. Unblock dates (delete from DB)
       const unblockArray = Array.from(pendingUnblocks);
       for (let i = 0; i < unblockArray.length; i++) {
-        await fetch(`http://localhost:5000/api/availability/service/${selectedService}/${unblockArray[i]}`, {
+        await fetch(`${API_BASE}/availability/service/${selectedService}/${unblockArray[i]}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });

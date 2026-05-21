@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, FC } from 'react';
+import { API_BASE } from '../config/api';
 
 // Types
 export interface VendorService {
@@ -191,7 +192,7 @@ const VendorProvider: FC<VendorProviderProps> = ({ children }) => {
       
       if (vendorToken) {
         try {
-          const response = await fetch('http://localhost:5000/api/vendor/services', {
+          const response = await fetch(`${API_BASE}/vendor/services`, {
             headers: {
               'Authorization': `Bearer ${vendorToken}`,
               'Content-Type': 'application/json'
@@ -246,7 +247,7 @@ const VendorProvider: FC<VendorProviderProps> = ({ children }) => {
       // Load vendor profile from backend API
       if (vendorToken) {
         try {
-          const profileRes = await fetch('http://localhost:5000/api/vendor/profile', {
+          const profileRes = await fetch(`${API_BASE}/vendor/profile`, {
             headers: {
               'Authorization': `Bearer ${vendorToken}`,
               'Content-Type': 'application/json'
@@ -379,7 +380,7 @@ const VendorProvider: FC<VendorProviderProps> = ({ children }) => {
 
       console.log('Making API call to add service...');
       // API call to add service
-      const response = await fetch('http://localhost:5000/api/vendor/services', {
+      const response = await fetch(`${API_BASE}/vendor/services`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${vendorToken}`,
@@ -461,7 +462,7 @@ const VendorProvider: FC<VendorProviderProps> = ({ children }) => {
       }
 
       // API call to update service
-      const response = await fetch(`http://localhost:5000/api/vendor/services/${id}`, {
+      const response = await fetch(`${API_BASE}/vendor/services/${id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${vendorToken}`,
@@ -536,7 +537,7 @@ const VendorProvider: FC<VendorProviderProps> = ({ children }) => {
       }
 
       // API call to delete service
-      const response = await fetch(`http://localhost:5000/api/vendor/services/${id}`, {
+      const response = await fetch(`${API_BASE}/vendor/services/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${vendorToken}`,
@@ -654,7 +655,7 @@ const VendorProvider: FC<VendorProviderProps> = ({ children }) => {
       });
 
       // API call to update vendor profile
-      const response = await fetch('http://localhost:5000/api/vendor/profile', {
+      const response = await fetch(`${API_BASE}/vendor/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

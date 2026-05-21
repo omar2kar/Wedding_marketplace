@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from "react-router-dom";
 import { CameraIcon, VideoCameraIcon, FlowerIcon, LocationIcon, SparkleIcon, MicrophoneIcon, CakeIcon, ClipboardIcon } from '../components/icons';
+import { API_BASE, SERVER_BASE } from '../config/api';
 
 /* ── Intersection Observer hook for scroll animations ── */
 const useInView = (threshold = 0.15) => {
@@ -73,7 +74,7 @@ const Home: React.FC = () => {
   const [popularVendors, setPopularVendors] = useState<{id:number; businessName:string; category:string; profileImage:string|null}[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/featured-vendors')
+    fetch(`${API_BASE}/featured-vendors`)
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -157,7 +158,7 @@ const Home: React.FC = () => {
               style={{ transitionDelay: `${200 + i * 200}ms` }}>
               <div className="overflow-hidden rounded-2xl mb-5 relative" style={{ aspectRatio: '4/5', background: 'linear-gradient(135deg, #f4e9dc, #ecc0a4)' }}>
                 {v.profileImage ? (
-                  <img src={v.profileImage.startsWith('http') ? v.profileImage : `http://localhost:5000${v.profileImage.startsWith('/') ? '' : '/'}${v.profileImage}`}
+                  <img src={v.profileImage.startsWith('http') ? v.profileImage : `${SERVER_BASE}${v.profileImage.startsWith('/') ? '' : '/'}${v.profileImage}`}
                     alt={v.businessName}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                 ) : (

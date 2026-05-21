@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface Review {
   id: number;
@@ -50,7 +51,7 @@ const AllReviews: React.FC = () => {
       if (ratingFilter !== 'all') params.append('rating', ratingFilter);
       if (reportedOnly) params.append('reported_only', 'true');
       
-      const response = await fetch(`http://localhost:5000/api/admin/reviews?${params}`, {
+      const response = await fetch(`${API_BASE}/admin/reviews?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -80,17 +81,17 @@ const AllReviews: React.FC = () => {
 
       switch (actionType) {
         case 'hide':
-          endpoint = `http://localhost:5000/api/admin/reviews/${selectedReview.id}/hide`;
+          endpoint = `${API_BASE}/admin/reviews/${selectedReview.id}/hide`;
           break;
         case 'approve':
-          endpoint = `http://localhost:5000/api/admin/reviews/${selectedReview.id}/approve`;
+          endpoint = `${API_BASE}/admin/reviews/${selectedReview.id}/approve`;
           break;
         case 'delete':
-          endpoint = `http://localhost:5000/api/admin/reviews/${selectedReview.id}`;
+          endpoint = `${API_BASE}/admin/reviews/${selectedReview.id}`;
           method = 'DELETE';
           break;
         case 'resolve':
-          endpoint = `http://localhost:5000/api/admin/reviews/${selectedReview.id}/resolve-reports`;
+          endpoint = `${API_BASE}/admin/reviews/${selectedReview.id}/resolve-reports`;
           body.action = 'dismiss';
           break;
       }

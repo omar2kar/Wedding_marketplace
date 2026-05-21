@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface DashboardStats {
   pendingVendors: number;
@@ -41,7 +42,7 @@ const AdminDashboard: React.FC = () => {
   const fetchDashboardStats = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/dashboard/stats', {
+      const response = await fetch(`${API_BASE}/admin/dashboard/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

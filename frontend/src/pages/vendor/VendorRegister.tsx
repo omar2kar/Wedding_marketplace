@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 const VendorRegister: React.FC = () => {
   const { t } = useTranslation();
@@ -59,7 +60,7 @@ const VendorRegister: React.FC = () => {
 
     try {
       // Call real API endpoint
-      const response = await fetch('http://localhost:5000/api/vendor/register', {
+      const response = await fetch(`${API_BASE}/vendor/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

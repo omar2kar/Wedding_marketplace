@@ -1,4 +1,5 @@
 import { request } from './request';
+import { API_BASE } from '../config/api';
 
 export interface AvailabilitySlot {
   date: string; // YYYY-MM-DD
@@ -174,7 +175,7 @@ export const getVendorAvailability = async (): Promise<VendorAvailabilitySlot[]>
       throw new Error('No vendor token found');
     }
 
-    const response = await fetch('http://localhost:5000/api/availability/vendor', {
+    const response = await fetch(`${API_BASE}/availability/vendor`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -206,7 +207,7 @@ export const updateServiceAvailability = async (
       throw new Error('No vendor token found');
     }
 
-    const response = await fetch(`http://localhost:5000/api/availability/service/${serviceId}`, {
+    const response = await fetch(`${API_BASE}/availability/service/${serviceId}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -240,7 +241,7 @@ export const bulkUpdateServiceAvailability = async (
       throw new Error('No vendor token found');
     }
 
-    const response = await fetch(`http://localhost:5000/api/availability/service/${serviceId}/bulk`, {
+    const response = await fetch(`${API_BASE}/availability/service/${serviceId}/bulk`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -273,7 +274,7 @@ export const deleteServiceAvailability = async (
       throw new Error('No vendor token found');
     }
 
-    const response = await fetch(`http://localhost:5000/api/availability/service/${serviceId}/${date}`, {
+    const response = await fetch(`${API_BASE}/availability/service/${serviceId}/${date}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,

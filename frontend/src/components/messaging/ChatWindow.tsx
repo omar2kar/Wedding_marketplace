@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { API_BASE, SERVER_BASE } from '../../config/api';
 
 interface Message {
     id: number;
@@ -81,7 +82,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 ? `/api/messages/client/${userId}/conversations`
                 : `/api/messages/vendor/${userId}/conversations`;
 
-            const response = await fetch(`http://localhost:5000${endpoint}`, {
+            const response = await fetch(`${SERVER_BASE}${endpoint}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem(`${userType}Token`)}`,
                     [`${userType}-id`]: userId.toString()
@@ -101,7 +102,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         if (!otherPartyId) return;
 
         try {
-            const response = await fetch('http://localhost:5000/api/messages/conversation', {
+            const response = await fetch(`${API_BASE}/messages/conversation`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -130,7 +131,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         setLoading(true);
         try {
             const response = await fetch(
-                `http://localhost:5000/api/messages/conversation/${conversationId}/messages`,
+                `${API_BASE}/messages/conversation/${conversationId}/messages`,
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem(`${userType}Token`)}`,
@@ -164,7 +165,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
         setSending(true);
         try {
-            const response = await fetch('http://localhost:5000/api/messages/send', {
+            const response = await fetch(`${API_BASE}/messages/send`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -196,7 +197,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
     const markAsRead = async (conversationId: number) => {
         try {
-            await fetch(`http://localhost:5000/api/messages/conversation/${conversationId}/read`, {
+            await fetch(`${API_BASE}/messages/conversation/${conversationId}/read`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

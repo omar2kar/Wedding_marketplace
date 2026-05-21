@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface Service {
   id: number;
@@ -49,7 +50,7 @@ const AllServices: React.FC = () => {
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (categoryFilter !== 'all') params.append('category', categoryFilter);
       
-      const response = await fetch(`http://localhost:5000/api/admin/services?${params}`, {
+      const response = await fetch(`${API_BASE}/admin/services?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -73,8 +74,8 @@ const AllServices: React.FC = () => {
       setProcessing(true);
       const token = localStorage.getItem('adminToken');
       const endpoint = actionType === 'delete' 
-        ? `http://localhost:5000/api/admin/services/${selectedService.id}`
-        : `http://localhost:5000/api/admin/services/${selectedService.id}/${actionType}`;
+        ? `${API_BASE}/admin/services/${selectedService.id}`
+        : `${API_BASE}/admin/services/${selectedService.id}/${actionType}`;
       
       const method = actionType === 'delete' ? 'DELETE' : 'POST';
       

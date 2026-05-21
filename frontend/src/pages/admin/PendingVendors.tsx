@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../config/api';
 
 interface Vendor {
   id: number;
@@ -37,7 +38,7 @@ const PendingVendors: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       console.log('Fetching pending vendors with token:', token ? 'Token exists' : 'No token');
       
-      const response = await fetch('http://localhost:5000/api/admin/vendors/pending', {
+      const response = await fetch(`${API_BASE}/admin/vendors/pending`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -78,7 +79,7 @@ const PendingVendors: React.FC = () => {
       const token = localStorage.getItem('adminToken');
       console.log(`${action}ing vendor ${selectedVendor.id} with notes:`, notes);
       
-      const response = await fetch(`http://localhost:5000/api/admin/vendors/${selectedVendor.id}/${action}`, {
+      const response = await fetch(`${API_BASE}/admin/vendors/${selectedVendor.id}/${action}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

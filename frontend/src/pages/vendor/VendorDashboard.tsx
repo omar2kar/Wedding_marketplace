@@ -7,6 +7,7 @@ import VendorCalendar from '../../components/vendor/VendorCalendar';
 import VendorReviews from '../../components/vendor/VendorReviews';
 import AvailabilityManagement from '../../components/vendor/AvailabilityManagement';
 import BookingsManagement from '../../components/vendor/BookingsManagement';
+import { API_BASE, SERVER_BASE } from '../../config/api';
 
 const VendorDashboard: React.FC = () => {
   // Welcome banner visibility
@@ -133,7 +134,7 @@ const VendorDashboard: React.FC = () => {
         return;
       }
 
-      const serviceResponse = await fetch('http://localhost:5000/api/vendor/services', {
+      const serviceResponse = await fetch(`${API_BASE}/vendor/services`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${vendorToken}`,
@@ -176,7 +177,7 @@ const VendorDashboard: React.FC = () => {
           formData.append('images', file);
         });
         
-        const imageResponse = await fetch(`http://localhost:5000/api/images/services/${serviceId}/images`, {
+        const imageResponse = await fetch(`${API_BASE}/images/services/${serviceId}/images`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${vendorToken}`
@@ -959,7 +960,7 @@ const VendorDashboard: React.FC = () => {
                   <div className="relative group">
                     {profileData?.profileImage ? (
                       <img 
-                        src={profileData.profileImage.startsWith('http') ? profileData.profileImage : `http://localhost:5000${profileData.profileImage.startsWith('/') ? '' : '/'}${profileData.profileImage}`}
+                        src={profileData.profileImage.startsWith('http') ? profileData.profileImage : `${SERVER_BASE}${profileData.profileImage.startsWith('/') ? '' : '/'}${profileData.profileImage}`}
                         alt="Profile" 
                         className="w-28 h-28 rounded-2xl object-cover shadow-md"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden'); }}
@@ -993,7 +994,7 @@ const VendorDashboard: React.FC = () => {
                             const formData = new FormData();
                             formData.append('image', file);
                             const token = localStorage.getItem('vendorToken');
-                            const res = await fetch('http://localhost:5000/api/upload-image', {
+                            const res = await fetch(`${API_BASE}/upload-image`, {
                               method: 'POST',
                               headers: { 'Authorization': `Bearer ${token}` },
                               body: formData
@@ -1003,7 +1004,7 @@ const VendorDashboard: React.FC = () => {
                               const imagePath = data.filePath;
                               console.log('Image uploaded to:', imagePath);
                               // Save profile_image directly to DB
-                              const saveRes = await fetch('http://localhost:5000/api/vendor/profile', {
+                              const saveRes = await fetch(`${API_BASE}/vendor/profile`, {
                                 method: 'PUT',
                                 headers: {
                                   'Content-Type': 'application/json',

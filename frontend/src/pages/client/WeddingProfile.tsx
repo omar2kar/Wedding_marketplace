@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useClient } from '../../context/ClientContext';
+import { API_BASE, SERVER_BASE } from '../../config/api';
 
 interface WeddingProfileData {
   id?: number;
@@ -113,7 +114,7 @@ const WeddingProfile: React.FC = () => {
 
   const loadProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/wedding-profile/client/${client!.id}`);
+      const res = await fetch(`${API_BASE}/wedding-profile/client/${client!.id}`);
       const data = await res.json();
       if (data) {
         setProfile({
@@ -135,7 +136,7 @@ const WeddingProfile: React.FC = () => {
   const loadRecommendations = async () => {
     setRecoLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/wedding-profile/recommendations/${client!.id}`);
+      const res = await fetch(`${API_BASE}/wedding-profile/recommendations/${client!.id}`);
       const data = await res.json();
       if (data.recommendations) {
         setRecommendations(data.recommendations);
@@ -148,7 +149,7 @@ const WeddingProfile: React.FC = () => {
 
   const loadTasks = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/wedding-profile/tasks/${client!.id}`);
+      const res = await fetch(`${API_BASE}/wedding-profile/tasks/${client!.id}`);
       const data = await res.json();
       setTasks(Array.isArray(data) ? data : []);
     } catch (err) { console.error('Error loading tasks:', err); }
@@ -156,7 +157,7 @@ const WeddingProfile: React.FC = () => {
 
   const loadBookedVendors = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/wedding-profile/booked-vendors/${client!.id}`);
+      const res = await fetch(`${API_BASE}/wedding-profile/booked-vendors/${client!.id}`);
       const data = await res.json();
       setBookedVendors(Array.isArray(data) ? data : []);
     } catch (err) { console.error('Error loading booked vendors:', err); }
@@ -165,7 +166,7 @@ const WeddingProfile: React.FC = () => {
   const saveProfile = async () => {
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/wedding-profile/save', {
+      const res = await fetch(`${API_BASE}/wedding-profile/save`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clientId: client!.id, ...profile })
@@ -174,7 +175,7 @@ const WeddingProfile: React.FC = () => {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
         // Create default tasks if first time
-        await fetch('http://localhost:5000/api/wedding-profile/tasks/defaults', {
+        await fetch(`${API_BASE}/wedding-profile/tasks/defaults`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ clientId: client!.id })
@@ -187,7 +188,7 @@ const WeddingProfile: React.FC = () => {
 
   const toggleTask = async (taskId: number) => {
     try {
-      await fetch(`http://localhost:5000/api/wedding-profile/tasks/${taskId}/toggle`, { method: 'PUT' });
+      await fetch(`${API_BASE}/wedding-profile/tasks/${taskId}/toggle`, { method: 'PUT' });
       setTasks(prev => prev.map(t => t.id === taskId ? { ...t, is_completed: !t.is_completed } : t));
     } catch (err) { console.error('Error toggling task:', err); }
   };
@@ -195,7 +196,7 @@ const WeddingProfile: React.FC = () => {
   const addTask = async () => {
     if (!newTask.trim()) return;
     try {
-      const res = await fetch('http://localhost:5000/api/wedding-profile/tasks', {
+      const res = await fetch(`${API_BASE}/wedding-profile/tasks`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ clientId: client!.id, title: newTask, category: newTaskCategory })
@@ -209,7 +210,7 @@ const WeddingProfile: React.FC = () => {
 
   const deleteTask = async (taskId: number) => {
     try {
-      await fetch(`http://localhost:5000/api/wedding-profile/tasks/${taskId}`, { method: 'DELETE' });
+      await fetch(`${API_BASE}/wedding-profile/tasks/${taskId}`, { method: 'DELETE' });
       setTasks(prev => prev.filter(t => t.id !== taskId));
     } catch (err) { console.error('Error deleting task:', err); }
   };
@@ -487,7 +488,7 @@ const WeddingProfile: React.FC = () => {
                   <div className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0"
                     style={{ background: 'linear-gradient(135deg, #9333ea 0%, #ec4899 100%)' }}>
                     {vendor.profile_image ? (
-                      <img src={vendor.profile_image.startsWith('http') ? vendor.profile_image : `http://localhost:5000${vendor.profile_image}`}
+                      <img src={vendor.profile_image.startsWith('http') ? vendor.profile_image : `${SERVER_BASE}${vendor.profile_image}`}
                         alt="" className="w-full h-full object-cover rounded-xl"
                         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                     ) : (
@@ -612,7 +613,7 @@ const WeddingProfile: React.FC = () => {
                           <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold text-white flex-shrink-0 overflow-hidden"
                             style={{ background: 'linear-gradient(135deg, #9333ea, #ec4899)' }}>
                             {vendor.profileImage ? (
-                              <img src={vendor.profileImage.startsWith('http') ? vendor.profileImage : `http://localhost:5000${vendor.profileImage}`}
+                              <img src={vendor.profileImage.startsWith('http') ? vendor.profileImage : `${SERVER_BASE}${vendor.profileImage}`}
                                 alt="" className="w-full h-full object-cover"
                                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             ) : vendor.businessName.charAt(0).toUpperCase()}
@@ -672,7 +673,7 @@ const WeddingProfile: React.FC = () => {
                           <div className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold text-white flex-shrink-0 overflow-hidden"
                             style={{ background: 'linear-gradient(135deg, #9333ea, #ec4899)' }}>
                             {vendor.profileImage ? (
-                              <img src={vendor.profileImage.startsWith('http') ? vendor.profileImage : `http://localhost:5000${vendor.profileImage}`}
+                              <img src={vendor.profileImage.startsWith('http') ? vendor.profileImage : `${SERVER_BASE}${vendor.profileImage}`}
                                 alt="" className="w-full h-full object-cover"
                                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                             ) : vendor.businessName.charAt(0).toUpperCase()}

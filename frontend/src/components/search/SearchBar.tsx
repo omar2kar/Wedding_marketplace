@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import debounce from 'lodash/debounce';
+import { API_BASE } from '../../config/api';
 
 interface SearchSuggestion {
     type: 'service' | 'vendor' | 'category';
@@ -25,7 +26,7 @@ export const SearchBar: React.FC = () => {
 
             try {
                 const response = await fetch(
-                    `http://localhost:5000/api/search/suggestions?q=${encodeURIComponent(searchQuery)}`
+                    `${API_BASE}/search/suggestions?q=${encodeURIComponent(searchQuery)}`
                 );
                 const data = await response.json();
                 if (data.success) {

@@ -1,4 +1,5 @@
 import { request } from './request';
+import { API_BASE } from '../config/api';
 
 export interface Review {
   id: number;
@@ -14,7 +15,7 @@ export const getReviews = async (serviceId: number): Promise<Review[]> => {
     console.log(`Fetching reviews for service ${serviceId}`);
     
     // Direct fetch to backend API without authentication
-    const response = await fetch(`http://localhost:5000/api/reviews/services/${serviceId}/reviews`);
+    const response = await fetch(`${API_BASE}/reviews/services/${serviceId}/reviews`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -58,7 +59,7 @@ export const addReview = async (
   let clientId;
   try {
     // Try to get client profile from API using token
-    const response = await fetch('http://localhost:5000/api/client/profile', {
+    const response = await fetch(`${API_BASE}/client/profile`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -99,7 +100,7 @@ export const addReview = async (
       reviewText: payload.comment
     };
 
-    const response = await fetch(`http://localhost:5000/api/reviews/services/${serviceId}/add`, {
+    const response = await fetch(`${API_BASE}/reviews/services/${serviceId}/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
