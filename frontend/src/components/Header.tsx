@@ -141,35 +141,87 @@ const Header: React.FC = () => {
             </button>
 
             {/* Mobile */}
-            <button className="md:hidden p-2" style={{ color: navText }} onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-              </svg>
+            <button
+              className="md:hidden relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300"
+              style={{ color: navText, background: isMenuOpen ? (transparent ? 'rgba(255,255,255,0.15)' : 'rgba(199,164,138,0.1)') : 'transparent' }}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={t('Toggle menu')}
+              aria-expanded={isMenuOpen}
+            >
+              <span className="relative w-5 h-4 flex flex-col justify-between">
+                <span className="block h-[2px] w-full rounded-full transition-transform duration-300 ease-in-out origin-center"
+                  style={{ background: 'currentColor', transform: isMenuOpen ? 'translateY(7px) rotate(45deg)' : 'none' }} />
+                <span className="block h-[2px] w-full rounded-full transition-all duration-200 ease-in-out"
+                  style={{ background: 'currentColor', opacity: isMenuOpen ? 0 : 1, transform: isMenuOpen ? 'scaleX(0)' : 'scaleX(1)' }} />
+                <span className="block h-[2px] w-full rounded-full transition-transform duration-300 ease-in-out origin-center"
+                  style={{ background: 'currentColor', transform: isMenuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none' }} />
+              </span>
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t shadow-lg" style={{ borderColor: 'rgba(199,164,138,0.1)' }}>
-            <nav className="px-6 py-4 space-y-1">
-              {navLinks.map(item => (
-                <Link key={item.to} to={item.to} onClick={() => setIsMenuOpen(false)}
-                  className="block py-3 font-medium border-b" style={{ color: '#1a1a2e', borderColor: 'rgba(199,164,138,0.08)' }}>
-                  {item.label}
-                </Link>
-              ))}
+        <div className="md:hidden overflow-hidden transition-all duration-[400ms] ease-in-out"
+          style={{ maxHeight: isMenuOpen ? '32rem' : '0px', opacity: isMenuOpen ? 1 : 0 }}>
+          <div className="mx-4 mb-4 mt-1 rounded-2xl shadow-xl overflow-hidden" style={{ background: '#ffffff', border: '1px solid rgba(199,164,138,0.12)' }}>
+            <nav className="p-3">
+              {navLinks.map((item, i) => {
+                const isActive = location.pathname === item.to;
+                return (
+                  <Link key={item.to} to={item.to} onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-between px-4 py-3.5 rounded-xl font-playfair font-medium transition-all duration-300 ease-out"
+                    style={{
+                      color: isActive ? '#c7a48a' : '#1a1a2e',
+                      background: isActive ? 'rgba(199,164,138,0.08)' : 'transparent',
+                      transitionDelay: isMenuOpen ? `${i * 50 + 80}ms` : '0ms',
+                      transform: isMenuOpen ? 'translateX(0)' : 'translateX(16px)',
+                      opacity: isMenuOpen ? 1 : 0,
+                    }}>
+                    {item.label}
+                    <span style={{ color: '#e8c597' }}>&rarr;</span>
+                  </Link>
+                );
+              })}
+
+              <div className="my-2 h-px" style={{ background: 'rgba(199,164,138,0.1)' }} />
+
               {!isAuthenticated ? (
-                <Link to="/login" onClick={() => setIsMenuOpen(false)} className="block py-3 font-medium" style={{ color: '#c7a48a' }}>{t('Login')}</Link>
+                <Link to="/login" onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center py-3.5 rounded-xl font-semibold text-white transition-all duration-300 ease-out"
+                  style={{
+                    background: 'linear-gradient(135deg, #c7a48a, #e8c597)',
+                    transitionDelay: isMenuOpen ? `${navLinks.length * 50 + 80}ms` : '0ms',
+                    transform: isMenuOpen ? 'translateX(0)' : 'translateX(16px)',
+                    opacity: isMenuOpen ? 1 : 0,
+                  }}>
+                  {t('Login')}
+                </Link>
               ) : (
                 <>
-                  <Link to="/client/dashboard" onClick={() => setIsMenuOpen(false)} className="block py-3 font-medium" style={{ color: '#1a1a2e' }}>{t('Dashboard')}</Link>
-                  <button onClick={() => { logout(); setIsMenuOpen(false); }} className="block py-3 text-red-500 font-medium">{t('Logout')}</button>
+                  <Link to="/client/dashboard" onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all duration-300 ease-out hover:bg-gray-50"
+                    style={{
+                      color: '#1a1a2e',
+                      transitionDelay: isMenuOpen ? `${navLinks.length * 50 + 80}ms` : '0ms',
+                      transform: isMenuOpen ? 'translateX(0)' : 'translateX(16px)',
+                      opacity: isMenuOpen ? 1 : 0,
+                    }}>
+                    <span>🏠</span> {t('Dashboard')}
+                  </Link>
+                  <button onClick={() => { logout(); setIsMenuOpen(false); }}
+                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl font-medium text-red-500 transition-all duration-300 ease-out hover:bg-red-50"
+                    style={{
+                      transitionDelay: isMenuOpen ? `${navLinks.length * 50 + 130}ms` : '0ms',
+                      transform: isMenuOpen ? 'translateX(0)' : 'translateX(16px)',
+                      opacity: isMenuOpen ? 1 : 0,
+                    }}>
+                    <span>🚪</span> {t('Logout')}
+                  </button>
                 </>
               )}
             </nav>
           </div>
-        )}
+        </div>
       </div>
     </header>
   );
