@@ -12,6 +12,7 @@ import { API_BASE } from '../../config/api';
 const ClientDashboard: React.FC = () => {
   const { client, isAuthenticated, isLoading } = useClient();
   const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
@@ -27,8 +28,8 @@ const ClientDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="dark:bg-[#090a10] transition-colors duration-300 min-h-screen flex items-center justify-center" style={{ background: '#f4e9dc' }}>
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2" style={{ borderColor: '#c7a48a' }}></div>
+      <div className="min-h-screen flex items-center justify-center transition-colors duration-300 bg-[#f4e9dc] dark:bg-[#090a10]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#c7a48a] dark:border-[#d4af37]"></div>
       </div>
     );
   }
@@ -45,21 +46,24 @@ const ClientDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="dark:bg-[#090a10] transition-colors duration-300" style={{ background: '#f4e9dc', minHeight: '100vh', paddingTop: '80px' }}>
+    <div className="min-h-screen pt-20 transition-colors duration-300 bg-[#f4e9dc] dark:bg-[#090a10]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           {/* ── Sidebar ── */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 sticky top-24 dark:border dark:border-[#d4af37]/20 dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]" style={{ border: '1px solid rgba(199,164,138,0.15)' }}>
+            <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 sticky top-24 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
+              
               {/* User Info */}
               <div className="text-center mb-6">
-                <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3"
-                  style={{ background: 'linear-gradient(135deg, #c7a48a, #e8c597)' }}>
+                <div 
+                  className="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-white dark:text-slate-950 text-2xl font-bold mb-3 shadow-inner"
+                  style={{ background: isDark ? 'linear-gradient(135deg, #2a2416, #d4af37)' : 'linear-gradient(135deg, #c7a48a, #e8c597)' }}
+                >
                   {client.name?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <h2 className="text-lg font-semibold dark:text-slate-100" style={{ color: '#1a1a2e' }}>{client.name}</h2>
-                <p className="text-xs mt-0.5 dark:text-slate-400" style={{ color: '#b9a18e' }}>{client.email}</p>
+                <h2 className="text-lg font-semibold text-[#1a1a2e] dark:text-slate-100">{client.name}</h2>
+                <p className="text-xs mt-0.5 text-[#b9a18e] dark:text-slate-400">{client.email}</p>
               </div>
 
               {/* Nav */}
@@ -68,16 +72,11 @@ const ClientDashboard: React.FC = () => {
                   const isActive = activeTab === item.id;
                   return (
                     <Link key={item.id} to={item.path}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all border-l-[3px] ${
                         isActive
-                          ? 'dark:bg-[#d4af37]/10 dark:text-[#d4af37] dark:border-l-[#d4af37]'
-                          : 'dark:text-slate-400 dark:hover:bg-[#d4af37]/5 dark:hover:text-[#f3e5ab]'
-                      }`}
-                      style={{
-                        background: isActive ? 'rgba(199,164,138,0.1)' : 'transparent',
-                        color: isActive ? '#c7a48a' : '#6b5e53',
-                        borderLeft: isActive ? '3px solid #c7a48a' : '3px solid transparent'
-                      }}>
+                          ? 'bg-[rgba(199,164,138,0.1)] dark:bg-[#d4af37]/10 text-[#c7a48a] dark:text-[#d4af37] border-[#c7a48a] dark:border-[#d4af37]'
+                          : 'border-transparent text-[#6b5e53] dark:text-slate-400 hover:bg-black/5 dark:hover:bg-[#d4af37]/5 hover:text-[#c7a48a] dark:hover:text-[#f3e5ab]'
+                      }`}>
                       <span className="text-lg">{item.icon}</span>
                       {item.label}
                     </Link>
@@ -106,6 +105,8 @@ const ClientDashboard: React.FC = () => {
 
 /* ═══════ OVERVIEW ═══════ */
 const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const [stats, setStats] = useState({ totalOrders: 0, activeOrders: 0, wishlistItems: 0, savedVendors: 0 });
 
   useEffect(() => {
@@ -138,19 +139,19 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
   }, [client]);
 
   const statCards = [
-    { label: 'Total Bookings', value: stats.totalOrders, icon: '📋', color: '#7e99c4' },
-    { label: 'Active Bookings', value: stats.activeOrders, icon: '🚀', color: '#c7a48a' },
-    { label: 'Wishlist Items', value: stats.wishlistItems, icon: '❤️', color: '#e8c597' },
+    { label: 'Total Bookings', value: stats.totalOrders, icon: '📋', lightColor: '#7e99c4', darkColor: '#94a3b8' },
+    { label: 'Active Bookings', value: stats.activeOrders, icon: '🚀', lightColor: '#c7a48a', darkColor: '#d4af37' },
+    { label: 'Wishlist Items', value: stats.wishlistItems, icon: '❤️', lightColor: '#e8c597', darkColor: '#f3e5ab' },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome */}
-      <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 dark:border dark:border-[#d4af37]/20 dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]" style={{ border: '1px solid rgba(199,164,138,0.15)' }}>
-        <h1 className="text-2xl font-semibold mb-1 dark:text-slate-100" style={{ color: '#1a1a2e' }}>
+      <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
+        <h1 className="text-2xl font-semibold mb-1 text-[#1a1a2e] dark:text-slate-100">
           Welcome back, {client.name?.split(' ')[0]}! 👋
         </h1>
-        <p className="text-sm dark:text-slate-400" style={{ color: '#b9a18e' }}>
+        <p className="text-sm text-[#b9a18e] dark:text-slate-400">
           Here's an overview of your wedding planning journey.
         </p>
       </div>
@@ -158,11 +159,11 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {statCards.map((s, i) => (
-          <div key={i} className="bg-white dark:bg-[#121420] rounded-2xl p-5 dark:border dark:border-[#d4af37]/20 dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]" style={{ border: '1px solid rgba(199,164,138,0.15)' }}>
+          <div key={i} className="bg-white dark:bg-[#121420] rounded-2xl p-5 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider dark:text-slate-400" style={{ color: '#b9a18e' }}>{s.label}</p>
-                <p className="text-3xl font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-[#b9a18e] dark:text-slate-400">{s.label}</p>
+                <p className="text-3xl font-bold mt-1" style={{ color: isDark ? s.darkColor : s.lightColor }}>{s.value}</p>
               </div>
               <div className="text-3xl">{s.icon}</div>
             </div>
@@ -171,17 +172,34 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 dark:border dark:border-[#d4af37]/20 dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]" style={{ border: '1px solid rgba(199,164,138,0.15)' }}>
-        <h2 className="text-lg font-semibold mb-4 dark:text-slate-100" style={{ color: '#1a1a2e' }}>Quick Actions</h2>
+      <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
+        <h2 className="text-lg font-semibold mb-4 text-[#1a1a2e] dark:text-slate-100">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
-            { to: '/categories', label: 'Browse Vendors', icon: '🔍', bg: '#c7a48a' },
-            { to: '/client/dashboard/wedding', label: 'Wedding Profile', icon: '💍', bg: '#7e99c4' },
-            { to: '/client/dashboard/wishlist', label: 'My Wishlist', icon: '❤️', bg: '#e8c597' },
+            { 
+              to: '/categories', label: 'Browse Vendors', icon: '🔍', 
+              lightBg: '#c7a48a', 
+              darkClasses: 'text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.3)]',
+              darkStyle: { background: 'linear-gradient(to right, #d4af37, #f3e5ab, #c5a059)' }
+            },
+            { 
+              to: '/client/dashboard/wedding', label: 'Wedding Profile', icon: '💍', 
+              lightBg: '#7e99c4', 
+              darkClasses: 'bg-[#1f2235] text-slate-200 border border-[#d4af37]/30 hover:bg-[#2a2d45]',
+              darkStyle: {}
+            },
+            { 
+              to: '/client/dashboard/wishlist', label: 'My Wishlist', icon: '❤️', 
+              lightBg: '#e8c597', 
+              darkClasses: 'bg-[#1f2235] text-slate-200 border border-[#d4af37]/30 hover:bg-[#2a2d45]',
+              darkStyle: {}
+            },
           ].map((action, i) => (
             <Link key={i} to={action.to}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl text-white font-medium text-sm transition-all hover:opacity-90 hover:shadow-md dark:text-slate-950 dark:bg-[#d4af37] dark:hover:bg-[#e0bd4b] dark:hover:shadow-[0_0_25px_rgba(212,175,55,0.3)]"
-              style={{ background: action.bg }}>
+              className={`flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm transition-all hover:opacity-90 hover:shadow-md ${
+                isDark ? action.darkClasses : 'text-white'
+              }`}
+              style={isDark ? action.darkStyle : { background: action.lightBg }}>
               <span>{action.icon}</span> {action.label}
             </Link>
           ))}
@@ -189,8 +207,8 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
       </div>
 
       {/* Getting Started */}
-      <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 dark:border dark:border-[#d4af37]/20 dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)]" style={{ border: '1px solid rgba(199,164,138,0.15)' }}>
-        <h2 className="text-lg font-semibold mb-4 dark:text-slate-100" style={{ color: '#1a1a2e' }}>Getting Started</h2>
+      <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
+        <h2 className="text-lg font-semibold mb-4 text-[#1a1a2e] dark:text-slate-100">Getting Started</h2>
         <div className="space-y-3">
           {[
             { step: '1', text: 'Complete your wedding profile with date, budget and preferences', to: '/client/dashboard/wedding' },
@@ -198,14 +216,17 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
             { step: '3', text: 'Book your favorite vendors and track everything in one place', to: '/client/dashboard/orders' },
           ].map((item, i) => (
             <Link key={i} to={item.to}
-              className="flex items-center gap-4 p-4 rounded-xl transition-all hover:shadow-sm dark:bg-[#0f1018] dark:border dark:border-[#d4af37]/15 dark:hover:bg-[#1a1c2b]"
-              style={{ background: '#faf7f4', border: '1px solid rgba(199,164,138,0.1)' }}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0"
-                style={{ background: '#c7a48a' }}>
+              className="flex items-center gap-4 p-4 rounded-xl transition-all hover:shadow-sm bg-[#faf7f4] border border-[rgba(199,164,138,0.1)] dark:bg-[#0f1018] dark:border-[#d4af37]/15 dark:hover:bg-[#1a1c2b]">
+              <div 
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-inner"
+                style={{ 
+                  background: isDark ? '#d4af37' : '#c7a48a', 
+                  color: isDark ? '#0b0c14' : '#ffffff' 
+                }}>
                 {item.step}
               </div>
-              <p className="text-sm font-medium dark:text-slate-300" style={{ color: '#6b5e53' }}>{item.text}</p>
-              <svg className="w-4 h-4 ml-auto flex-shrink-0 dark:text-[#d4af37]" style={{ color: '#c7a48a' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <p className="text-sm font-medium text-[#6b5e53] dark:text-slate-300">{item.text}</p>
+              <svg className="w-4 h-4 ml-auto flex-shrink-0 text-[#c7a48a] dark:text-[#d4af37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
