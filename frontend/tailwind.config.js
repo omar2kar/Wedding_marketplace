@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // 1. تفعيل Dark Mode عبر كلاس HTML (.dark)
+  darkMode: 'class', 
+
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
@@ -30,12 +33,18 @@ module.exports = {
           800: '#4b6488',
           900: '#3b526f',
         },
-        accentTop: '#ecc0a4',   // light apricot/pink (top background)
+        // 2. درجات ألوان مخصصة للثيم الداكن (Dark Mode Palette)
+        dark: {
+          bg: '#0f172a',      // خلفية التطبيق الأساسية (Slate 900)
+          card: '#1e293b',    // خلفية البطاقات والـ Navbar (Slate 800)
+          border: '#334155',  // الحدود والتطويرات (Slate 700)
+          text: {
+            main: '#f8fafc',  // النصوص الرئيسية (تباين عالٍ جداً)
+            muted: '#94a3b8', // النصوص الثانوية والوصف
+          }
+        },
+        accentTop: '#ecc0a4',     // light apricot/pink (top background)
         accentNeutral: '#c7a48a', // neutral warm beige (borders/accents)
-
-
-
-
       },
       fontFamily: {
         'sans': ['Inter', 'ui-sans-serif', 'system-ui'],

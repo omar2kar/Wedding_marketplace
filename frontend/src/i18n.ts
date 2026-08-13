@@ -31,6 +31,7 @@ const resources = {
       'profile': 'Profil',
       'dashboard': 'Dashboard',
       'settings': 'Einstellungen',
+      "heroTitle": "Für euren besonderen Tag —\nund all die anderen besonderen Tage.",
       
       // Wedding Marketplace specific
       'weddingMarketplace': 'Hochzeits-Marktplatz',
