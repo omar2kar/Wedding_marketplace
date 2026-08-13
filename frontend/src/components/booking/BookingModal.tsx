@@ -26,7 +26,6 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
   const { t } = useTranslation();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-
   const [formData, setFormData] = useState({
     eventDate: '',
     eventTime: '10:00',
@@ -160,45 +159,28 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
 
   if (!isOpen) return null;
 
-  // Not logged in UI
+  // Not logged in
   if (!clientId) {
     return (
-      <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white dark:bg-[#121420] border border-transparent dark:border-[#d4af37]/20 rounded-3xl shadow-2xl max-w-md w-full p-8 text-center transition-colors">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-[#121420] rounded-3xl shadow-2xl dark:shadow-[0_15px_40px_rgba(0,0,0,0.6)] dark:border dark:border-[#d4af37]/20 max-w-md w-full p-8 text-center transition-colors duration-300">
           <div className="mb-6">
-            <div 
-              className="w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-inner"
-              style={{ background: isDark ? 'linear-gradient(135deg, #2a2416, #d4af37)' : 'linear-gradient(135deg, #c7a48a, #e8c597)' }}
-            >
+            <div className="w-20 h-20 bg-gradient-to-br from-red-400 to-orange-500 rounded-full flex items-center justify-center mx-auto">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-slate-100 mb-3">Login Required</h3>
-          <p className="text-[#6b5e53] dark:text-slate-400 mb-6">You must be logged in to book a service.</p>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mb-3">Login Required</h3>
+          <p className="text-gray-600 dark:text-slate-400 mb-6">You must be logged in to book a service.</p>
           <div className="space-y-3">
-            <a 
-              href="/client/login" 
-              className={`block w-full px-6 py-3 font-semibold rounded-xl transition-all ${
-                isDark 
-                  ? 'text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.4)]' 
-                  : 'bg-[#c7a48a] text-white hover:bg-[#b59278]'
-              }`}
-              style={isDark ? { background: 'linear-gradient(to right, #d4af37, #f3e5ab, #c5a059)' } : {}}
-            >
+            <a href="/client/login" className="block w-full px-6 py-3 bg-gradient-to-r from-[#d4af37] via-[#f3e5ab] to-[#c5a059] text-slate-950 font-semibold rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.55)] transition-all shadow-lg">
               Login
             </a>
-            <a 
-              href="/client/register" 
-              className="block w-full px-6 py-3 border border-[rgba(199,164,138,0.4)] dark:border-[#d4af37]/30 text-[#6b5e53] dark:text-slate-300 font-semibold rounded-xl hover:bg-[#faf7f4] dark:hover:bg-white/5 transition-all"
-            >
+            <a href="/client/register" className="block w-full px-6 py-3 border-2 border-gray-300 dark:border-[#d4af37]/30 text-gray-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-[#d4af37]/10 transition-all">
               Create Account
             </a>
-            <button 
-              onClick={onClose} 
-              className="block w-full px-6 py-3 text-gray-400 hover:text-[#1a1a2e] dark:hover:text-slate-200 font-medium transition-colors"
-            >
+            <button onClick={onClose} className="block w-full px-6 py-3 text-gray-500 dark:text-slate-400 font-medium hover:text-gray-700 dark:hover:text-slate-200 transition-colors">
               Cancel
             </button>
           </div>
@@ -207,27 +189,27 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
     );
   }
 
-  // Success UI
+  // Success
   if (success) {
     return (
-      <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white dark:bg-[#121420] border border-transparent dark:border-[#d4af37]/20 rounded-3xl shadow-2xl max-w-md w-full p-8 text-center transition-colors">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-[#121420] rounded-3xl shadow-2xl dark:shadow-[0_15px_40px_rgba(0,0,0,0.6)] dark:border dark:border-[#d4af37]/20 max-w-md w-full p-8 text-center transition-colors duration-300">
           <div className="mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-[#10b981] to-[#059669] dark:from-[#34d399] dark:to-[#10b981] rounded-full flex items-center justify-center mx-auto shadow-inner">
-              <svg className="w-10 h-10 text-white dark:text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
-          <h3 className="text-2xl font-bold text-[#1a1a2e] dark:text-slate-100 mb-2">Booking Successful!</h3>
-          <p className="text-[#6b5e53] dark:text-slate-400 mb-4">Thank you for your booking.</p>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mb-2">Booking Successful!</h3>
+          <p className="text-gray-600 dark:text-slate-400 mb-4">Thank you for your booking.</p>
           {bookingDetails && (
-            <div className="bg-[#faf7f4] dark:bg-[#0b0c14] border border-[#c7a48a]/20 dark:border-[#d4af37]/30 rounded-2xl p-4 mb-4">
-              <p className="text-sm text-[#6b5e53] dark:text-slate-400 mb-1">Booking Number</p>
-              <p className="text-xl font-bold text-[#c7a48a] dark:text-[#d4af37]">{bookingDetails.bookingNumber}</p>
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-[#1a1c2b] dark:to-[#151625] dark:border dark:border-[#d4af37]/15 rounded-2xl p-4 mb-4">
+              <p className="text-sm text-gray-600 dark:text-slate-400 mb-1">Booking Number</p>
+              <p className="text-xl font-bold text-purple-700 dark:text-[#d4af37]">{bookingDetails.bookingNumber}</p>
             </div>
           )}
-          <p className="text-sm text-gray-500 dark:text-gray-400">The vendor will review your request.</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">The vendor will review your request.</p>
         </div>
       </div>
     );
@@ -239,52 +221,39 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
+  // Count unavailable
   const blockedCount = unavailableDates.filter(d => d.status === 'blocked').length;
   const bookedCount = unavailableDates.filter(d => d.status === 'booked').length;
 
   return (
-    <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-[#121420] border border-transparent dark:border-[#d4af37]/20 rounded-3xl shadow-2xl max-w-2xl w-full my-8 transition-colors">
-        
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-[#121420] rounded-3xl shadow-2xl dark:shadow-[0_15px_50px_rgba(0,0,0,0.65)] dark:border dark:border-[#d4af37]/20 max-w-2xl w-full my-8 transition-colors duration-300">
         {/* Header */}
-        <div 
-          className={`rounded-t-3xl p-6 ${
-            isDark 
-              ? 'bg-[#131524] border-b border-[#d4af37]/20' 
-              : 'bg-[#c7a48a] text-white'
-          }`}
-        >
+        <div className="bg-gradient-to-r from-[#1e1b4b] via-[#2b2348] to-[#0f101d] dark:border-b dark:border-[#d4af37]/20 rounded-t-3xl p-6 text-white">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <h2 className={`text-2xl font-bold mb-2 ${isDark ? 'text-[#d4af37]' : 'text-white'}`}>Book Service</h2>
-              <p className={isDark ? 'text-slate-300' : 'text-white/90'}>{service.name}</p>
+              <h2 className="text-2xl font-bold mb-2">Book Service</h2>
+              <p className="text-purple-100 dark:text-[#f3e5ab]/80">{service.name}</p>
             </div>
-            <button 
-              onClick={onClose} 
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                isDark 
-                  ? 'bg-white/5 hover:bg-white/10 text-slate-300' 
-                  : 'bg-white/20 hover:bg-white/30 text-white'
-              }`}
-            >
+            <button onClick={onClose} className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
-          <div className={`flex items-center gap-4 mt-4 pt-4 border-t ${isDark ? 'border-[#d4af37]/20 text-slate-300' : 'border-white/20 text-white/90'}`}>
+          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-white/20">
             <div className="flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
               </svg>
               <span className="text-sm">{service.category}</span>
             </div>
-            <div className={`flex items-center gap-2 ${isDark ? 'text-[#d4af37]' : 'text-white'}`}>
+            <div className="flex items-center gap-2">
               <span className="text-lg font-bold">€{service.price}</span>
             </div>
             {service.business_name && (
               <div className="flex items-center gap-2">
-                <span className="text-sm opacity-80">{service.business_name}</span>
+                <span className="text-sm text-purple-100 dark:text-[#f3e5ab]/80">{service.business_name}</span>
               </div>
             )}
           </div>
@@ -293,29 +262,24 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-lg">
-              <p className="text-red-700 dark:text-red-400 font-medium">{error}</p>
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+              <p className="text-red-700 font-medium">{error}</p>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Event Date */}
             <div>
-              <label className="block text-sm font-semibold text-[#6b5e53] dark:text-slate-400 mb-2">Event Date *</label>
-              <input 
-                type="date" 
-                required 
-                min={todayStr}
+              <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-2">Event Date *</label>
+              <input type="date" required min={todayStr}
                 value={formData.eventDate}
                 onChange={(e) => handleDateChange(e.target.value)}
-                className={`w-full px-4 py-3 border rounded-xl outline-none transition-all bg-[#faf7f4] dark:bg-[#0b0c14] text-[#1a1a2e] dark:text-slate-100 ${
-                  dateError 
-                    ? 'border-red-300 dark:border-red-500/50 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-500/20' 
-                    : 'border-[rgba(199,164,138,0.3)] dark:border-[#d4af37]/30 focus:border-[#c7a48a] dark:focus:border-[#d4af37] focus:ring-2 focus:ring-[rgba(199,164,138,0.2)] dark:focus:ring-[#d4af37]/20'
+                className={`w-full px-4 py-3 border-2 rounded-xl bg-white dark:bg-[#0f1018] text-gray-800 dark:text-slate-100 focus:ring-2 outline-none transition-all ${
+                  dateError ? 'border-red-300 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 dark:border-[#d4af37]/20 focus:border-purple-500 dark:focus:border-[#d4af37] focus:ring-purple-200 dark:focus:ring-[#d4af37]/20'
                 }`}
               />
               {dateError && (
-                <p className="text-red-500 dark:text-red-400 text-sm mt-1.5 flex items-center gap-1">
+                <p className="text-red-500 text-sm mt-1.5 flex items-center gap-1">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                   </svg>
@@ -325,9 +289,9 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
               {/* Availability hint */}
               {(blockedCount > 0 || bookedCount > 0) && (
                 <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
-                  {blockedCount > 0 && <span className="text-red-400 dark:text-red-500/80">{blockedCount} blocked</span>}
+                  {blockedCount > 0 && <span className="text-red-400">{blockedCount} blocked</span>}
                   {blockedCount > 0 && bookedCount > 0 && ' · '}
-                  {bookedCount > 0 && <span className="text-blue-400 dark:text-blue-500/80">{bookedCount} booked</span>}
+                  {bookedCount > 0 && <span className="text-blue-400">{bookedCount} booked</span>}
                   {' dates for this service'}
                 </p>
               )}
@@ -335,86 +299,66 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, service, c
 
             {/* Event Time */}
             <div>
-              <label className="block text-sm font-semibold text-[#6b5e53] dark:text-slate-400 mb-2">Event Time</label>
-              <input 
-                type="time" 
-                value={formData.eventTime}
+              <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-2">Event Time</label>
+              <input type="time" value={formData.eventTime}
                 onChange={(e) => setFormData({ ...formData, eventTime: e.target.value })}
-                className="w-full px-4 py-3 border border-[rgba(199,164,138,0.3)] dark:border-[#d4af37]/30 rounded-xl outline-none transition-all bg-[#faf7f4] dark:bg-[#0b0c14] text-[#1a1a2e] dark:text-slate-100 focus:border-[#c7a48a] dark:focus:border-[#d4af37] focus:ring-2 focus:ring-[rgba(199,164,138,0.2)] dark:focus:ring-[#d4af37]/20"
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-[#d4af37]/20 bg-white dark:bg-[#0f1018] text-gray-800 dark:text-slate-100 rounded-xl focus:border-purple-500 dark:focus:border-[#d4af37] focus:ring-2 focus:ring-purple-200 dark:focus:ring-[#d4af37]/20 outline-none transition-all"
               />
             </div>
           </div>
 
           {/* Event Location */}
           <div>
-            <label className="block text-sm font-semibold text-[#6b5e53] dark:text-slate-400 mb-2">Event Location *</label>
-            <input 
-              type="text" 
-              required 
-              placeholder="e.g. Grand Hotel, Berlin"
+            <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-2">Event Location *</label>
+            <input type="text" required placeholder="e.g. Grand Hotel, Berlin"
               value={formData.eventLocation}
               onChange={(e) => setFormData({ ...formData, eventLocation: e.target.value })}
-              className="w-full px-4 py-3 border border-[rgba(199,164,138,0.3)] dark:border-[#d4af37]/30 rounded-xl outline-none transition-all bg-[#faf7f4] dark:bg-[#0b0c14] text-[#1a1a2e] dark:text-slate-100 focus:border-[#c7a48a] dark:focus:border-[#d4af37] focus:ring-2 focus:ring-[rgba(199,164,138,0.2)] dark:focus:ring-[#d4af37]/20"
+              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-[#d4af37]/20 bg-white dark:bg-[#0f1018] text-gray-800 dark:text-slate-100 rounded-xl focus:border-purple-500 dark:focus:border-[#d4af37] focus:ring-2 focus:ring-purple-200 dark:focus:ring-[#d4af37]/20 outline-none transition-all"
             />
           </div>
 
           {/* Guest Count */}
           <div>
-            <label className="block text-sm font-semibold text-[#6b5e53] dark:text-slate-400 mb-2">Number of Guests (optional)</label>
-            <input 
-              type="number" 
-              min="1" 
-              placeholder="100"
+            <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-2">Number of Guests (optional)</label>
+            <input type="number" min="1" placeholder="100"
               value={formData.guestCount}
               onChange={(e) => setFormData({ ...formData, guestCount: e.target.value })}
-              className="w-full px-4 py-3 border border-[rgba(199,164,138,0.3)] dark:border-[#d4af37]/30 rounded-xl outline-none transition-all bg-[#faf7f4] dark:bg-[#0b0c14] text-[#1a1a2e] dark:text-slate-100 focus:border-[#c7a48a] dark:focus:border-[#d4af37] focus:ring-2 focus:ring-[rgba(199,164,138,0.2)] dark:focus:ring-[#d4af37]/20"
+              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-[#d4af37]/20 bg-white dark:bg-[#0f1018] text-gray-800 dark:text-slate-100 rounded-xl focus:border-purple-500 dark:focus:border-[#d4af37] focus:ring-2 focus:ring-purple-200 dark:focus:ring-[#d4af37]/20 outline-none transition-all"
             />
           </div>
 
           {/* Client Notes */}
           <div>
-            <label className="block text-sm font-semibold text-[#6b5e53] dark:text-slate-400 mb-2">Special Requests (optional)</label>
-            <textarea 
-              rows={3} 
-              placeholder="Share your special requests with the vendor"
+            <label className="block text-sm font-semibold text-gray-700 dark:text-slate-200 mb-2">Special Requests (optional)</label>
+            <textarea rows={3} placeholder="Share your special requests with the vendor"
               value={formData.clientNotes}
               onChange={(e) => setFormData({ ...formData, clientNotes: e.target.value })}
-              className="w-full px-4 py-3 border border-[rgba(199,164,138,0.3)] dark:border-[#d4af37]/30 rounded-xl outline-none transition-all bg-[#faf7f4] dark:bg-[#0b0c14] text-[#1a1a2e] dark:text-slate-100 focus:border-[#c7a48a] dark:focus:border-[#d4af37] focus:ring-2 focus:ring-[rgba(199,164,138,0.2)] dark:focus:ring-[#d4af37]/20 resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all resize-none"
             />
           </div>
 
           {/* Info */}
-          <div className="bg-[#faf7f4] dark:bg-[#131524] border border-[rgba(199,164,138,0.3)] dark:border-[#d4af37]/30 rounded-2xl p-4 transition-colors">
+          <div className="bg-blue-50 dark:bg-[#111b2b] border border-blue-200 dark:border-blue-400/20 rounded-2xl p-4">
             <div className="flex items-start gap-3">
-              <svg className="w-5 h-5 text-[#c7a48a] dark:text-[#d4af37] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <div className="text-sm">
-                <p className="font-semibold mb-1 text-[#1a1a2e] dark:text-slate-100">Important:</p>
-                <p className="text-[#6b5e53] dark:text-slate-400">This is a non-binding request. No payment required now. The vendor will review and confirm your booking.</p>
+              <div className="text-sm text-gray-700 dark:text-slate-200">
+                <p className="font-semibold mb-1">Important:</p>
+                <p className="text-gray-600 dark:text-slate-400">This is a non-binding request. No payment required now. The vendor will review and confirm your booking.</p>
               </div>
             </div>
           </div>
 
           {/* Buttons */}
           <div className="flex gap-3 pt-2">
-            <button 
-              type="button" 
-              onClick={onClose}
-              className="flex-1 px-6 py-3 border border-[rgba(199,164,138,0.4)] dark:border-[#d4af37]/30 text-[#6b5e53] dark:text-slate-300 font-semibold rounded-xl hover:bg-[#faf7f4] dark:hover:bg-white/5 transition-all"
-            >
+            <button type="button" onClick={onClose}
+              className="flex-1 px-6 py-3 border-2 border-gray-300 dark:border-[#d4af37]/30 text-gray-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-[#d4af37]/10 transition-all">
               Cancel
             </button>
-            <button 
-              type="submit"
+            <button type="submit"
               disabled={loading || !formData.eventDate || !formData.eventLocation}
-              className={`flex-1 px-6 py-3 font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all ${
-                isDark 
-                  ? 'text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.4)]' 
-                  : 'bg-[#c7a48a] text-white hover:bg-[#b59278]'
-              }`}
-              style={isDark && !(loading || !formData.eventDate || !formData.eventLocation) ? { background: 'linear-gradient(to right, #d4af37, #f3e5ab, #c5a059)' } : (isDark ? { background: '#d4af37' } : {})}
-            >
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-[#d4af37] via-[#f3e5ab] to-[#c5a059] text-slate-950 font-semibold rounded-xl hover:shadow-[0_0_25px_rgba(212,175,55,0.55)] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg">
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
                   <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
