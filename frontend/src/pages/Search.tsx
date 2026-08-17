@@ -34,7 +34,21 @@ const Search: React.FC = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const categoryList = ['All', 'Photography', 'Videography', 'Floristry', 'Venues', 'Beauty', 'Entertainment', 'Cake & Sweets', 'Planning'];
+  const categoryList = [
+  'All',
+  'Photography',
+  'Videography',
+  'Floristry & Decoration',
+  'Locations',
+  'Beauty & Styling',
+  'Music & Show',
+  'Wedding Cakes & Sweets',
+  'Wedding Planner',
+  'Catering',
+  'Bridal Fashion',
+  'Wedding Cars & Transport',
+  'Wedding Rings & Jewelry',
+];
   const [category, setCategory] = useState('All');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');

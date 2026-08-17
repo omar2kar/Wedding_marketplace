@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next'; // 1. استيراد أداة الترجمة
 import { useClient } from '../../context/ClientContext';
 import { API_BASE, SERVER_BASE } from '../../config/api';
 
@@ -71,9 +72,23 @@ interface RecommendationGroup {
 }
 
 const STYLES = ['Classic', 'Modern', 'Rustic', 'Bohemian', 'Glamorous', 'Minimalist', 'Vintage', 'Garden', 'Beach'];
-const CATEGORIES = ['Photography', 'Videography', 'Venues', 'Floristry', 'Beauty', 'Entertainment', 'Cake & Sweets', 'Planning', 'Car Rental'];
+const CATEGORIES = [
+  'Photography',
+  'Videography',
+  'Floristry & Decoration',
+  'Locations',
+  'Beauty & Styling',
+  'Music & Show',
+  'Wedding Cakes & Sweets',
+  'Wedding Planner',
+  'Catering',
+  'Bridal Fashion',
+  'Wedding Cars & Transport',
+  'Wedding Rings & Jewelry',
+];
 
 const WeddingProfile: React.FC = () => {
+  const { t } = useTranslation(); // 2. تهيئة الترجمة
   const { client } = useClient();
   const [activeSection, setActiveSection] = useState<'profile' | 'tasks' | 'vendors' | 'recommendations'>('profile');
   const [loading, setLoading] = useState(true);
@@ -89,7 +104,7 @@ const WeddingProfile: React.FC = () => {
   // Tasks
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState('');
-  const [newTaskCategory, setNewTaskCategory] = useState('Planning');
+  const [newTaskCategory, setNewTaskCategory] =useState('Wedding Planner');
 
   // Booked Vendors
   const [bookedVendors, setBookedVendors] = useState<BookedVendor[]>([]);
@@ -241,44 +256,47 @@ const WeddingProfile: React.FC = () => {
     );
   }
 
+  // ترجمة التبويبات ديناميكياً
+  const TABS = [
+    { id: 'profile' as const, label: t('Wedding Details'), icon: '💍' },
+    { id: 'tasks' as const, label: `${t('Checklist')} (${completedTasks}/${totalTasks})`, icon: '✅' },
+    { id: 'vendors' as const, label: `${t('Booked Vendors')} (${bookedVendors.length})`, icon: '👥' },
+    { id: 'recommendations' as const, label: `${t('Suggestions')} (${topPicks.length})`, icon: '⭐' },
+  ];
+
   return (
     <div>
       {/* Header Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Days Left</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{t('Days Left')}</p>
           <p className="text-3xl font-bold text-purple-600">{daysUntilWedding !== null ? daysUntilWedding : '—'}</p>
-          <p className="text-xs text-gray-400 mt-1">{profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Set your date'}</p>
+          <p className="text-xs text-gray-400 mt-1">{profile.weddingDate ? new Date(profile.weddingDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : t('Set your date')}</p>
         </div>
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Tasks Done</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{t('Tasks Done')}</p>
           <p className="text-3xl font-bold text-green-600">{completedTasks}/{totalTasks}</p>
           <div className="w-full h-2 bg-gray-100 rounded-full mt-2">
             <div className="h-2 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, background: 'linear-gradient(90deg, #9333ea, #ec4899)' }}></div>
           </div>
         </div>
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Booked Vendors</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{t('Booked Vendors')}</p>
           <p className="text-3xl font-bold text-blue-600">{bookedVendors.length}</p>
-          <p className="text-xs text-gray-400 mt-1">{bookedVendors.filter(v => v.booking_status === 'confirmed').length} confirmed</p>
+          <p className="text-xs text-gray-400 mt-1">{bookedVendors.filter(v => v.booking_status === 'confirmed').length} {t('confirmed')}</p>
         </div>
         <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Budget Used</p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">{t('Budget Used')}</p>
           <p className="text-3xl font-bold text-amber-600">€{totalBudgetUsed.toLocaleString()}</p>
-          {profile.budgetMax && <p className="text-xs text-gray-400 mt-1">of €{Number(profile.budgetMax).toLocaleString()} budget</p>}
+          {profile.budgetMax && <p className="text-xs text-gray-400 mt-1">{t('of')} €{Number(profile.budgetMax).toLocaleString()} {t('budget')}</p>}
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        {([
-          { id: 'profile' as const, label: 'Wedding Details', icon: '💍' },
-          { id: 'tasks' as const, label: `Checklist (${completedTasks}/${totalTasks})`, icon: '✅' },
-          { id: 'vendors' as const, label: `Booked Vendors (${bookedVendors.length})`, icon: '👥' },
-          { id: 'recommendations' as const, label: `Suggestions (${topPicks.length})`, icon: '⭐' },
-        ]).map(tab => (
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        {TABS.map(tab => (
           <button key={tab.id} onClick={() => setActiveSection(tab.id)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
               activeSection === tab.id
                 ? 'bg-purple-600 text-white shadow-md'
                 : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-300'
@@ -291,51 +309,51 @@ const WeddingProfile: React.FC = () => {
       {/* ═══ WEDDING DETAILS TAB ═══ */}
       {activeSection === 'profile' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Wedding Details</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">{t('Wedding Details')}</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Wedding Date</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Wedding Date')}</label>
               <input type="date" value={profile.weddingDate}
                 onChange={e => setProfile(p => ({ ...p, weddingDate: e.target.value }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Venue / Location</label>
-              <input type="text" value={profile.venueLocation} placeholder="e.g. Grand Hotel, Berlin"
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Venue / Location')}</label>
+              <input type="text" value={profile.venueLocation} placeholder={t('e.g. Grand Hotel, Berlin')}
                 onChange={e => setProfile(p => ({ ...p, venueLocation: e.target.value }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Number of Guests</label>
-              <input type="number" value={profile.guestCount} placeholder="e.g. 150"
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Number of Guests')}</label>
+              <input type="number" value={profile.guestCount} placeholder={t('e.g. 150')}
                 onChange={e => setProfile(p => ({ ...p, guestCount: e.target.value ? parseInt(e.target.value) : '' }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Wedding Style</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Wedding Style')}</label>
               <select value={profile.preferredStyle}
                 onChange={e => setProfile(p => ({ ...p, preferredStyle: e.target.value }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                <option value="">Select a style...</option>
-                {STYLES.map(s => <option key={s} value={s}>{s}</option>)}
+                <option value="">{t('Select a style...')}</option>
+                {STYLES.map(s => <option key={s} value={s}>{t(s)}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Budget Min (€)</label>
-              <input type="number" value={profile.budgetMin} placeholder="e.g. 5000"
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Budget Min (€)')}</label>
+              <input type="number" value={profile.budgetMin} placeholder={t('e.g. 5000')}
                 onChange={e => setProfile(p => ({ ...p, budgetMin: e.target.value ? parseFloat(e.target.value) : '' }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Budget Max (€)</label>
-              <input type="number" value={profile.budgetMax} placeholder="e.g. 20000"
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Budget Max (€)')}</label>
+              <input type="number" value={profile.budgetMax} placeholder={t('e.g. 20000')}
                 onChange={e => setProfile(p => ({ ...p, budgetMax: e.target.value ? parseFloat(e.target.value) : '' }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Color Theme</label>
-              <input type="text" value={profile.colorTheme} placeholder="e.g. Blush Pink & Gold"
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Color Theme')}</label>
+              <input type="text" value={profile.colorTheme} placeholder={t('e.g. Blush Pink & Gold')}
                 onChange={e => setProfile(p => ({ ...p, colorTheme: e.target.value }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             </div>
@@ -343,7 +361,7 @@ const WeddingProfile: React.FC = () => {
 
           {/* Services Needed */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Services You Need</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">{t('Services You Need')}</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map(cat => (
                 <button key={cat} onClick={() => toggleService(cat)}
@@ -352,7 +370,7 @@ const WeddingProfile: React.FC = () => {
                       ? 'bg-purple-100 text-purple-700 border-2 border-purple-400'
                       : 'bg-gray-50 text-gray-600 border border-gray-200 hover:border-gray-300'
                   }`}>
-                  {cat}
+                  {t(cat)}
                 </button>
               ))}
             </div>
@@ -360,8 +378,8 @@ const WeddingProfile: React.FC = () => {
 
           {/* Special Requirements */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Special Requirements</label>
-            <textarea rows={3} value={profile.specialRequirements} placeholder="Any special notes..."
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Special Requirements')}</label>
+            <textarea rows={3} value={profile.specialRequirements} placeholder={t('Any special notes...')}
               onChange={e => setProfile(p => ({ ...p, specialRequirements: e.target.value }))}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
           </div>
@@ -371,9 +389,9 @@ const WeddingProfile: React.FC = () => {
             <button onClick={saveProfile} disabled={saving}
               className="px-8 py-3 rounded-xl text-white font-semibold transition-all hover:opacity-90 disabled:opacity-50"
               style={{ background: 'linear-gradient(135deg, #9333ea 0%, #ec4899 100%)' }}>
-              {saving ? 'Saving...' : 'Save Wedding Profile'}
+              {saving ? t('Saving...') : t('Save Wedding Profile')}
             </button>
-            {saved && <span className="text-green-600 font-medium">Saved successfully!</span>}
+            {saved && <span className="text-green-600 font-medium">{t('Saved successfully!')}</span>}
           </div>
         </div>
       )}
@@ -382,33 +400,38 @@ const WeddingProfile: React.FC = () => {
       {activeSection === 'tasks' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Wedding Checklist</h3>
-            <span className="text-sm text-gray-500">{progressPercent}% complete</span>
+            <h3 className="text-lg font-semibold text-gray-900">{t('Wedding Checklist')}</h3>
+            <span className="text-sm text-gray-500">{progressPercent}% {t('complete')}</span>
           </div>
 
           {/* Add Task */}
           <div className="flex gap-2 mb-6">
-            <input type="text" value={newTask} placeholder="Add a new task..."
+            <input type="text" value={newTask} placeholder={t('Add a new task...')}
               onChange={e => setNewTask(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addTask()}
               className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
-            <select value={newTaskCategory} onChange={e => setNewTaskCategory(e.target.value)}
-              className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm">
-              {['Planning', ...CATEGORIES].filter((v, i, a) => a.indexOf(v) === i).map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+            <select
+  value={newTaskCategory}
+  onChange={e => setNewTaskCategory(e.target.value)}
+  className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm"
+>
+  {CATEGORIES.map(c => (
+    <option key={c} value={c}>
+      {t(c)}
+    </option>
+  ))}
+</select>
             <button onClick={addTask}
               className="px-5 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition">
-              Add
+              {t('Add')}
             </button>
           </div>
 
           {/* Task List */}
           {tasks.length === 0 ? (
             <div className="text-center py-12 text-gray-400">
-              <p className="text-lg mb-2">No tasks yet</p>
-              <p className="text-sm">Save your wedding profile first to get a default checklist, or add tasks manually.</p>
+              <p className="text-lg mb-2">{t('No tasks yet')}</p>
+              <p className="text-sm">{t('Save your wedding profile first to get a default checklist, or add tasks manually.')}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -435,7 +458,7 @@ const WeddingProfile: React.FC = () => {
                     </p>
                     {task.due_date && (
                       <p className="text-xs text-gray-400 mt-0.5">
-                        Due: {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {t('Due:')} {new Date(task.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </p>
                     )}
                   </div>
@@ -443,14 +466,14 @@ const WeddingProfile: React.FC = () => {
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
                       task.is_completed ? 'bg-gray-100 text-gray-400' : 'bg-purple-50 text-purple-600'
                     }`}>
-                      {task.category}
+                      {t(task.category)}
                     </span>
                   )}
                   <span className={`text-xs font-bold px-2 py-0.5 rounded ${
                     task.priority === 'high' ? 'bg-red-50 text-red-600' :
                     task.priority === 'medium' ? 'bg-yellow-50 text-yellow-600' : 'bg-blue-50 text-blue-600'
                   }`}>
-                    {task.priority}
+                    {t(task.priority)}
                   </span>
                   <button onClick={() => deleteTask(task.id)}
                     className="text-gray-300 hover:text-red-500 transition-colors p-1">
@@ -468,15 +491,15 @@ const WeddingProfile: React.FC = () => {
       {/* ═══ BOOKED VENDORS TAB ═══ */}
       {activeSection === 'vendors' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Your Booked Vendors</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">{t('Your Booked Vendors')}</h3>
 
           {bookedVendors.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400 text-lg mb-2">No vendors booked yet</p>
-              <p className="text-gray-400 text-sm mb-4">Start browsing vendors and book your first service!</p>
+              <p className="text-gray-400 text-lg mb-2">{t('No vendors booked yet')}</p>
+              <p className="text-gray-400 text-sm mb-4">{t('Start browsing vendors and book your first service!')}</p>
               <Link to="/search" className="inline-block px-6 py-2.5 rounded-xl text-white font-semibold transition-all hover:opacity-90"
                 style={{ background: 'linear-gradient(135deg, #9333ea 0%, #ec4899 100%)' }}>
-                Browse Vendors
+                {t('Browse Vendors')}
               </Link>
             </div>
           ) : (
@@ -505,12 +528,12 @@ const WeddingProfile: React.FC = () => {
                       <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                         vendor.booking_status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                       }`}>
-                        {vendor.booking_status}
+                        {t(vendor.booking_status)}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500">{vendor.service_name || vendor.category}</p>
+                    <p className="text-sm text-gray-500">{vendor.service_name || t(vendor.category)}</p>
                     <p className="text-xs text-gray-400 mt-0.5">
-                      Event: {vendor.event_date ? new Date(vendor.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                      {t('Event:')} {vendor.event_date ? new Date(vendor.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                     </p>
                   </div>
 
@@ -519,10 +542,10 @@ const WeddingProfile: React.FC = () => {
                     <p className="font-bold text-lg text-gray-900">€{Number(vendor.total_amount).toLocaleString()}</p>
                     <div className="flex gap-2 mt-1">
                       {vendor.phone && (
-                        <a href={`tel:${vendor.phone}`} className="text-xs text-purple-600 hover:underline">Call</a>
+                        <a href={`tel:${vendor.phone}`} className="text-xs text-purple-600 hover:underline">{t('Call')}</a>
                       )}
                       {vendor.email && (
-                        <a href={`mailto:${vendor.email}`} className="text-xs text-purple-600 hover:underline">Email</a>
+                        <a href={`mailto:${vendor.email}`} className="text-xs text-purple-600 hover:underline">{t('Email')}</a>
                       )}
                     </div>
                   </div>
@@ -532,13 +555,13 @@ const WeddingProfile: React.FC = () => {
               {/* Budget Summary */}
               <div className="mt-6 p-4 rounded-xl bg-purple-50 border border-purple-100">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium text-purple-700">Total Booked Amount</span>
+                  <span className="font-medium text-purple-700">{t('Total Booked Amount')}</span>
                   <span className="text-xl font-bold text-purple-700">€{totalBudgetUsed.toLocaleString()}</span>
                 </div>
                 {profile.budgetMax && (
                   <div className="mt-2">
                     <div className="flex justify-between text-xs text-purple-500 mb-1">
-                      <span>Budget remaining</span>
+                      <span>{t('Budget remaining')}</span>
                       <span>€{(Number(profile.budgetMax) - totalBudgetUsed).toLocaleString()}</span>
                     </div>
                     <div className="w-full h-2 bg-purple-100 rounded-full">
@@ -563,12 +586,12 @@ const WeddingProfile: React.FC = () => {
           ) : recommendations.length === 0 && topPicks.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
               <div className="text-5xl mb-4">💡</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No suggestions yet</h3>
-              <p className="text-gray-500 mb-4">Save your wedding details first (date, budget, services needed) and we'll suggest the best vendors for you!</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('No suggestions yet')}</h3>
+              <p className="text-gray-500 mb-4">{t('Save your wedding details first (date, budget, services needed) and we\'ll suggest the best vendors for you!')}</p>
               <button onClick={() => setActiveSection('profile')}
                 className="px-6 py-2.5 rounded-xl text-white font-semibold"
                 style={{ background: 'linear-gradient(135deg, #9333ea 0%, #ec4899 100%)' }}>
-                Complete Your Profile
+                {t('Complete Your Profile')}
               </button>
             </div>
           ) : (
@@ -577,23 +600,23 @@ const WeddingProfile: React.FC = () => {
               {recoStats && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap gap-6 items-center">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400">Found:</span>
-                    <span className="font-semibold text-gray-900">{recoStats.totalFound} services</span>
+                    <span className="text-gray-400">{t('Found:')}</span>
+                    <span className="font-semibold text-gray-900">{recoStats.totalFound} {t('services')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400">Budget:</span>
+                    <span className="text-gray-400">{t('Budget:')}</span>
                     <span className="font-semibold text-gray-900">{recoStats.budgetRange}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400">Categories needed:</span>
+                    <span className="text-gray-400">{t('Categories needed:')}</span>
                     <span className="font-semibold text-gray-900">{recoStats.categoriesNeeded}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="text-gray-400">Already booked:</span>
+                    <span className="text-gray-400">{t('Already booked:')}</span>
                     <span className="font-semibold text-green-600">{recoStats.categoriesBooked}</span>
                   </div>
                   <button onClick={loadRecommendations} className="ml-auto text-sm text-purple-600 hover:underline font-medium">
-                    Refresh
+                    {t('Refresh')}
                   </button>
                 </div>
               )}
@@ -602,7 +625,7 @@ const WeddingProfile: React.FC = () => {
               {topPicks.length > 0 && (
                 <div className="mb-8">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <span>⭐</span> Top Picks For You
+                    <span>⭐</span> {t('Top Picks For You')}
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {topPicks.map(vendor => (
@@ -620,7 +643,7 @@ const WeddingProfile: React.FC = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors truncate">{vendor.businessName}</h4>
-                            <p className="text-sm text-gray-500 truncate">{vendor.serviceName}</p>
+                            <p className="text-sm text-gray-500 truncate">{t(vendor.serviceName)}</p>
                           </div>
                           <span className={`text-xs font-bold px-2 py-1 rounded-full ${
                             vendor.matchType === 'excellent' ? 'bg-green-100 text-green-700' :
@@ -632,7 +655,7 @@ const WeddingProfile: React.FC = () => {
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-1">
                             <span className="text-yellow-500 text-sm">★</span>
-                            <span className="text-sm font-medium text-gray-900">{vendor.rating > 0 ? vendor.rating.toFixed(1) : 'New'}</span>
+                            <span className="text-sm font-medium text-gray-900">{vendor.rating > 0 ? vendor.rating.toFixed(1) : t('New')}</span>
                             <span className="text-xs text-gray-400">({vendor.totalReviews})</span>
                             {vendor.isVerified && <span className="text-xs text-green-600 font-bold ml-1">✓</span>}
                           </div>
@@ -641,7 +664,7 @@ const WeddingProfile: React.FC = () => {
                         {vendor.reasons.length > 0 && (
                           <div className="flex flex-wrap gap-1">
                             {vendor.reasons.slice(0, 2).map((r, i) => (
-                              <span key={i} className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">{r}</span>
+                              <span key={i} className="text-xs bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">{t(r)}</span>
                             ))}
                           </div>
                         )}
@@ -655,11 +678,11 @@ const WeddingProfile: React.FC = () => {
               {recommendations.map(group => (
                 <div key={group.category} className="mb-8">
                   <div className="flex items-center gap-3 mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">{group.category}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">{t(group.category)}</h3>
                     {group.isBooked ? (
-                      <span className="text-xs font-bold bg-green-100 text-green-700 px-2.5 py-1 rounded-full">Already Booked</span>
+                      <span className="text-xs font-bold bg-green-100 text-green-700 px-2.5 py-1 rounded-full">{t('Already Booked')}</span>
                     ) : (
-                      <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">Needs Booking</span>
+                      <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">{t('Needs Booking')}</span>
                     )}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -680,13 +703,13 @@ const WeddingProfile: React.FC = () => {
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-semibold text-gray-900 group-hover:text-purple-600 transition-colors text-sm truncate">{vendor.businessName}</h4>
-                            <p className="text-xs text-gray-500 truncate">{vendor.serviceName}</p>
+                            <p className="text-xs text-gray-500 truncate">{t(vendor.serviceName)}</p>
                           </div>
                           <span className="font-bold text-sm text-purple-600">€{vendor.price}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-yellow-500 text-xs">★ {vendor.rating > 0 ? vendor.rating.toFixed(1) : 'New'}</span>
-                          {vendor.isVerified && <span className="text-xs text-green-600 font-bold">✓ Verified</span>}
+                          <span className="text-yellow-500 text-xs">★ {vendor.rating > 0 ? vendor.rating.toFixed(1) : t('New')}</span>
+                          {vendor.isVerified && <span className="text-xs text-green-600 font-bold">✓ {t('Verified')}</span>}
                           {vendor.city && <span className="text-xs text-gray-400">{vendor.city}</span>}
                         </div>
                       </Link>

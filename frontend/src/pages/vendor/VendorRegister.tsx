@@ -4,8 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE } from '../../config/api';
 
 const VendorRegister: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     businessName: '',
     ownerName: '',
@@ -17,20 +18,24 @@ const VendorRegister: React.FC = () => {
     city: '',
     acceptTerms: false
   });
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const categories = [
-    'Photography',
-    'Videography',
-    'Floristry',
-    'Wedding Venues',
-    'Beauty & Makeup',
-    'Music & Entertainment',
-    'Cake & Sweets',
-    'Car Rental',
-    'Other Services'
-  ];
+  'Photography',
+  'Videography',
+  'Floristry & Decoration',
+  'Locations',
+  'Beauty & Styling',
+  'Music & Show',
+  'Wedding Cakes & Sweets',
+  'Wedding Planner',
+  'Catering',
+  'Bridal Fashion',
+  'Wedding Cars & Transport',
+  'Wedding Rings & Jewelry',
+];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -40,6 +45,10 @@ const VendorRegister: React.FC = () => {
     }));
   };
 
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -47,19 +56,18 @@ const VendorRegister: React.FC = () => {
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('Passwords do not match'));
       setIsLoading(false);
       return;
     }
 
     if (!formData.acceptTerms) {
-      setError('You must accept the terms and conditions');
+      setError(t('You must accept the terms and conditions'));
       setIsLoading(false);
       return;
     }
 
     try {
-      // Call real API endpoint
       const response = await fetch(`${API_BASE}/vendor/register`, {
         method: 'POST',
         headers: {
@@ -78,46 +86,74 @@ const VendorRegister: React.FC = () => {
       const data = await response.json();
       
       if (response.ok) {
-        // Don't store session data, redirect to login page with pending message
         navigate('/vendor/login', { 
           state: { 
-            message: 'Account created successfully! Your application is pending admin approval. You will be notified once approved.',
+            message: t('Account created successfully pending approval'),
             type: 'success'
           }
         });
       } else {
-        setError(data.error || 'Failed to create account. Please try again.');
+        setError(data.error ? t(data.error) : t('Failed to create account'));
       }
     } catch (err) {
       console.error('Registration error:', err);
-      setError('Failed to connect to server. Please try again.');
+      setError(t('Failed to connect to server'));
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen relative py-12 px-4 sm:px-6 lg:px-8 bg-[linear-gradient(170deg,#e7bcab_0%,#c1b5cc_45%,#8ba4c9_100%)] overflow-hidden selection:bg-[#cca281] selection:text-white">
+      
+      {/* 🌊 التموج السفلي (Wave) باللون الكريمي */}
+      <div className="absolute bottom-0 left-0 w-full z-0 pointer-events-none fixed">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
+          <path fill="#f7ebe0" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,218.7C672,213,768,171,864,144C960,117,1056,107,1152,122.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+      </div>
+
+      {/* زر تغيير اللغة - تصميم زجاجي */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-1 bg-white/20 backdrop-blur-md p-1.5 rounded-xl border border-white/30 shadow-sm z-20">
+        {[
+          { code: 'en', label: 'EN' },
+          { code: 'de', label: 'DE' },
+        ].map((lang) => (
+          <button
+            key={lang.code}
+            type="button"
+            onClick={() => changeLanguage(lang.code)}
+            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+              i18n.language === lang.code
+                ? 'bg-white text-[#cca281] shadow-sm'
+                : 'text-white hover:bg-white/20'
+            }`}
+          >
+            {lang.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="max-w-2xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="mx-auto h-16 w-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mb-4">
-            <svg className="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mx-auto h-16 w-16 bg-white/90 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-[#cca281]/10">
+            <svg className="h-8 w-8 text-[#cca281]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            Join as Vendor
+          <h2 className="text-4xl font-serif text-white tracking-wide mb-2 drop-shadow-sm">
+            {t('Join as Vendor')}
           </h2>
-          <p className="text-gray-600">
-            Start showcasing your services and reach thousands of customers
+          <p className="text-white/80 text-sm font-medium">
+            {t('Start showcasing your services')}
           </p>
         </div>
 
         {/* Registration Form */}
-        <form className="bg-white p-8 rounded-xl shadow-lg space-y-6" onSubmit={handleSubmit}>
+        <form className="bg-white p-8 rounded-3xl shadow-xl shadow-black/5 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
               {error}
             </div>
           )}
@@ -125,16 +161,16 @@ const VendorRegister: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Business Name */}
             <div className="md:col-span-2">
-              <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
-                Business Name *
+              <label htmlFor="businessName" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Business Name *')}
               </label>
               <input
                 id="businessName"
                 name="businessName"
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Example: Dream Studio Photography"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
+                placeholder={t('Example: Dream Studio Photography')}
                 value={formData.businessName}
                 onChange={handleInputChange}
               />
@@ -142,16 +178,16 @@ const VendorRegister: React.FC = () => {
 
             {/* Owner Name */}
             <div>
-              <label htmlFor="ownerName" className="block text-sm font-medium text-gray-700 mb-2">
-                Owner Name *
+              <label htmlFor="ownerName" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Owner Name *')}
               </label>
               <input
                 id="ownerName"
                 name="ownerName"
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Full Name"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
+                placeholder={t('Full Name')}
                 value={formData.ownerName}
                 onChange={handleInputChange}
               />
@@ -159,15 +195,15 @@ const VendorRegister: React.FC = () => {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email *
+              <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Email *')}
               </label>
               <input
                 id="email"
                 name="email"
                 type="email"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
                 placeholder="vendor@example.com"
                 value={formData.email}
                 onChange={handleInputChange}
@@ -177,16 +213,16 @@ const VendorRegister: React.FC = () => {
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number *
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Phone Number *')}
               </label>
               <input
                 id="phone"
                 name="phone"
                 type="tel"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="+962 7X XXX XXXX"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
+                placeholder={t('Phone Placeholder')}
                 value={formData.phone}
                 onChange={handleInputChange}
                 dir="ltr"
@@ -195,21 +231,21 @@ const VendorRegister: React.FC = () => {
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                Service Type *
+              <label htmlFor="category" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Service Type *')}
               </label>
               <select
                 id="category"
                 name="category"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
                 value={formData.category}
                 onChange={handleInputChange}
               >
-                <option value="">Select Service Type</option>
+                <option value="">{t('Select Service Type')}</option>
                 {categories.map((category) => (
                   <option key={category} value={category}>
-                    {category}
+                    {t(category)}
                   </option>
                 ))}
               </select>
@@ -217,16 +253,16 @@ const VendorRegister: React.FC = () => {
 
             {/* City */}
             <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                City *
+              <label htmlFor="city" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('City *')}
               </label>
               <input
                 id="city"
                 name="city"
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Amman, Irbid, Zarqa..."
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
+                placeholder={t('City placeholder')}
                 value={formData.city}
                 onChange={handleInputChange}
               />
@@ -234,15 +270,15 @@ const VendorRegister: React.FC = () => {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password *
+              <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Password *')}
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -251,15 +287,15 @@ const VendorRegister: React.FC = () => {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password *
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 mb-1.5">
+                {t('Confirm Password *')}
               </label>
               <input
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#f7ebe0]/30 border border-gray-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-[#cca281] focus:border-transparent transition-all outline-none text-gray-700"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
@@ -274,18 +310,18 @@ const VendorRegister: React.FC = () => {
               name="acceptTerms"
               type="checkbox"
               required
-              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded mt-1"
+              className="h-4 w-4 text-[#cca281] focus:ring-[#cca281] border-gray-300 rounded mt-1 cursor-pointer"
               checked={formData.acceptTerms}
               onChange={handleInputChange}
             />
-            <label htmlFor="acceptTerms" className="mr-3 text-sm text-gray-700">
-              I agree to the{' '}
-              <Link to="/terms" className="text-purple-600 hover:text-purple-500 underline">
-                Terms and Conditions
+            <label htmlFor="acceptTerms" className="mx-3 text-sm text-gray-600">
+              {t('I agree to the')}{' '}
+              <Link to="/terms" className="text-[#cca281] hover:text-[#b89172] underline">
+                {t('Terms and Conditions')}
               </Link>
-              {' '}and{' '}
-              <Link to="/privacy" className="text-purple-600 hover:text-purple-500 underline">
-                Privacy Policy
+              {' '}{t('and')}{' '}
+              <Link to="/privacy" className="text-[#cca281] hover:text-[#b89172] underline">
+                {t('Privacy Policy')}
               </Link>
             </label>
           </div>
@@ -294,7 +330,7 @@ const VendorRegister: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-md shadow-[#cca281]/20 text-sm font-semibold text-white bg-[#cca281] hover:bg-[#b89172] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#cca281] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {isLoading ? (
               <div className="flex items-center">
@@ -302,27 +338,27 @@ const VendorRegister: React.FC = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Creating Account...
+                {t('Creating Account...')}
               </div>
             ) : (
-              'Create Vendor Account'
+              t('Create Vendor Account')
             )}
           </button>
 
           {/* Login Link */}
-          <div className="text-center pt-4 border-t border-gray-200">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link to="/vendor/login" className="font-medium text-purple-600 hover:text-purple-500">
-                Login
+          <div className="text-center pt-5 border-t border-gray-100">
+            <p className="text-sm text-gray-500">
+              {t('Already have an account?')}{' '}
+              <Link to="/vendor/login" className="font-semibold text-[#cca281] hover:text-[#b89172] transition-colors">
+                {t('Login')}
               </Link>
             </p>
           </div>
 
           {/* Back to Main Site */}
-          <div className="text-center">
-            <Link to="/" className="text-sm text-gray-500 hover:text-gray-700">
-              ← Back to Main Site
+          <div className="text-center mt-2">
+            <Link to="/" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+              {i18n.language === 'ar' ? `← ${t('Back to main site')}` : `← ${t('Back to main site')}`}
             </Link>
           </div>
         </form>

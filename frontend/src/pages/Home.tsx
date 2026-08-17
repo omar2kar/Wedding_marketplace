@@ -49,15 +49,79 @@ const Home: React.FC = () => {
   const isDark = theme === 'dark';
 
   const categories = [
-    { id: 'venues', title: t('Venues'), icon: <LocationIcon />, to: '/search?category=Venues' },
-    { id: 'photography', title: t('photography'), icon: <CameraIcon />, to: '/search?category=Photography' },
-    { id: 'videography', title: t('videography'), icon: <VideoCameraIcon />, to: '/search?category=Videography' },
-    { id: 'floristry', title: t('Floristry'), icon: <FlowerIcon />, to: '/search?category=Floristry' },
-    { id: 'beauty', title: t('Beauty'), icon: <SparkleIcon />, to: '/search?category=Beauty' },
-    { id: 'entertainment', title: t('Entertainment'), icon: <MicrophoneIcon />, to: '/search?category=Entertainment' },
-    { id: 'cakeSweets', title: t('Cake & Sweets'), icon: <CakeIcon />, to: '/search?category=Cake & Sweets' },
-    { id: 'planning', title: t('Planning'), icon: <ClipboardIcon />, to: '/search?category=Planning' },
-  ];
+  {
+    id: 'photography',
+    title: t('Photography'),
+    icon: <CameraIcon />,
+    to: '/search?category=Photography',
+  },
+  {
+    id: 'videography',
+    title: t('Videography'),
+    icon: <VideoCameraIcon />,
+    to: '/search?category=Videography',
+  },
+  {
+    id: 'floristry-decoration',
+    title: t('Floristry & Decoration'),
+    icon: <FlowerIcon />,
+    to: '/search?category=Floristry & Decoration',
+  },
+  {
+    id: 'locations',
+    title: t('Locations'),
+    icon: <LocationIcon />,
+    to: '/search?category=Locations',
+  },
+  {
+    id: 'beauty-styling',
+    title: t('Beauty & Styling'),
+    icon: <SparkleIcon />,
+    to: '/search?category=Beauty & Styling',
+  },
+  {
+    id: 'music-show',
+    title: t('Music & Show'),
+    icon: <MicrophoneIcon />,
+    to: '/search?category=Music & Show',
+  },
+  {
+    id: 'wedding-cakes-sweets',
+    title: t('Wedding Cakes & Sweets'),
+    icon: <CakeIcon />,
+    to: '/search?category=Wedding Cakes & Sweets',
+  },
+  {
+    id: 'wedding-planner',
+    title: t('Wedding Planner'),
+    icon: <ClipboardIcon />,
+    to: '/search?category=Wedding Planner',
+  },
+  {
+    id: 'catering',
+    title: t('Catering'),
+    icon: <CakeIcon />,
+    to: '/search?category=Catering',
+  },
+  {
+    id: 'bridal-fashion',
+    title: t('Bridal Fashion'),
+    icon: <SparkleIcon />,
+    to: '/search?category=Bridal Fashion',
+  },
+  {
+    id: 'wedding-cars-transport',
+    title: t('Wedding Cars & Transport'),
+    icon: <LocationIcon />,
+    to: '/search?category=Wedding Cars & Transport',
+  },
+  {
+    id: 'wedding-rings-jewelry',
+    title: t('Wedding Rings & Jewelry'),
+    icon: <SparkleIcon />,
+    to: '/search?category=Wedding Rings & Jewelry',
+  },
+];
 
   const [popularVendors, setPopularVendors] = useState<{id:number; businessName:string; category:string; profileImage:string|null}[]>([]);
 
@@ -69,18 +133,48 @@ const Home: React.FC = () => {
           setPopularVendors(data);
         } else {
           setPopularVendors([
-            { id: 0, businessName: "Elegant Ballroom", category: "Venue", profileImage: "/images/photo-1493863641943-9b68992a8d07.jpeg" },
-            { id: 0, businessName: "Bridal Boutique", category: "Dress", profileImage: "/images/ABB+Cover+3.1.webp" },
-            { id: 0, businessName: "Capture the Moment", category: "Photography", profileImage: "/images/photo-1493863641943-9b68992a8d07.jpeg" },
-          ]);
+  {
+    id: 0,
+    businessName: "Elegant Ballroom",
+    category: "Locations",
+    profileImage: "/images/images.jpeg"
+  },
+  {
+    id: 0,
+    businessName: "Bridal Boutique",
+    category: "Bridal Fashion",
+    profileImage: "/images/ABB+Cover+3.1.webp"
+  },
+  {
+    id: 0,
+    businessName: "Capture the Moment",
+    category: "Photography",
+    profileImage: "/images/photo-1493863641943-9b68992a8d07.jpeg"
+  },
+]);
         }
       })
       .catch(() => {
         setPopularVendors([
-          { id: 0, businessName: "Elegant Ballroom", category: "Venue", profileImage: "/images/images.jpeg" },
-          { id: 0, businessName: "Bridal Boutique", category: "Dress", profileImage: "/images/ABB+Cover+3.1.webp" },
-          { id: 0, businessName: "Capture the Moment", category: "Photography", profileImage: "/images/photo-1493863641943-9b68992a8d07.jpeg" },
-        ]);
+  {
+    id: 0,
+    businessName: "Elegant Ballroom",
+    category: "Locations",
+    profileImage: "/images/images.jpeg"
+  },
+  {
+    id: 0,
+    businessName: "Bridal Boutique",
+    category: "Bridal Fashion",
+    profileImage: "/images/ABB+Cover+3.1.webp"
+  },
+  {
+    id: 0,
+    businessName: "Capture the Moment",
+    category: "Photography",
+    profileImage: "/images/photo-1493863641943-9b68992a8d07.jpeg"
+  },
+]);
       });
   }, []);
 
@@ -176,7 +270,7 @@ const Home: React.FC = () => {
             <Link key={v.id || i} to={v.id ? `/vendor/${v.id}` : '/search'} className="group">
               <div className="overflow-hidden rounded-2xl mb-5 relative transition-all duration-300 dark:border dark:border-transparent dark:group-hover:border-[#d4af37]/80 dark:group-hover:shadow-[0_10px_30px_rgba(212,175,55,0.25)]" 
                 style={{ aspectRatio: '4/5', background: isDark ? '#121420' : 'linear-gradient(135deg, #f4e9dc, #ecc0a4)' }}>
-                {v.profileImage ? (
+                {v.profileImage ? ( 
                   <img 
     src={getImageUrl(v.profileImage)}
     alt={v.businessName}
@@ -246,21 +340,30 @@ const Home: React.FC = () => {
             {/* المحتوى الأصلي الخاص بك محاط بـ relative z-10 */}
             <div className="relative z-10">
               <h2 className="font-playfair text-3xl md:text-4xl mb-4 text-[#1a1a2e] dark:text-slate-100 font-medium">
-                {t('Sit back and let a professional handle it.')}
-              </h2>
-              <h3 className="font-playfair text-2xl md:text-3xl mb-8 text-[#c7a48a] dark:text-[#d4af37] font-medium">
-                {t('Hire a Wedding Planner')}
-              </h3>
-              <Link to="/search?category=Planning"
-                className={`relative inline-block px-8 py-3.5 rounded-lg font-semibold overflow-hidden group transition-all duration-300 ${
-                  isDark 
-                    ? 'text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.4)] hover:shadow-[0_0_30px_rgba(212,175,55,0.7)] hover:scale-105' 
-                    : 'text-white shadow-md'
-                }`}
-                style={{ background: isDark ? 'linear-gradient(to right, #d4af37, #f3e5ab, #c5a059)' : '#c7a48a' }}>
-                <span className="relative z-10">{t('Browse Planners')}</span>
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-              </Link>
+  {t('Sit back and let a professional handle it.')}
+</h2>
+<h3 className="font-playfair text-2xl md:text-3xl mb-8 text-[#c7a48a] dark:text-[#d4af37] font-medium">
+  {t('Hire a Wedding Planner')}
+</h3>
+<Link
+  to="/search?category=Wedding Planner"
+  className={`relative inline-block px-8 py-3.5 rounded-lg font-semibold overflow-hidden group transition-all duration-300 ${
+    isDark 
+      ? 'text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.4)] hover:shadow-[0_0_30px_rgba(212,175,55,0.7)] hover:scale-105' 
+      : 'text-white shadow-md'
+  }`}
+  style={{
+    background: isDark
+      ? 'linear-gradient(to right, #d4af37, #f3e5ab, #c5a059)'
+      : '#c7a48a'
+  }}
+>
+  <span className="relative z-10">
+    {t('Browse Planners')}
+  </span>
+
+  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+</Link>
             </div>
           </div>
         </ScrollReveal>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useClient } from '../../context/ClientContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useTranslation } from 'react-i18next'; // إضافة مكتبة الترجمة
 import ClientProfile from './ClientProfile';
 import ClientOrders from './ClientOrders';
 import ClientWishlist from './ClientWishlist';
@@ -12,6 +13,7 @@ import { API_BASE } from '../../config/api';
 const ClientDashboard: React.FC = () => {
   const { client, isAuthenticated, isLoading } = useClient();
   const { theme } = useTheme();
+  const { t } = useTranslation(); // تهيئة دالة الترجمة
   const isDark = theme === 'dark';
   const navigate = useNavigate();
   const location = useLocation();
@@ -36,13 +38,14 @@ const ClientDashboard: React.FC = () => {
 
   if (!client) return null;
 
+  // استخدام الترجمة داخل القائمة
   const menuItems = [
-    { id: 'overview', label: 'Overview', icon: '🏠', path: '/client/dashboard' },
-    { id: 'wedding', label: 'Wedding Profile', icon: '💍', path: '/client/dashboard/wedding' },
-    { id: 'profile', label: 'My Profile', icon: '👤', path: '/client/dashboard/profile' },
-    { id: 'orders', label: 'My Bookings', icon: '📋', path: '/client/dashboard/orders' },
-    { id: 'wishlist', label: 'Wishlist', icon: '❤️', path: '/client/dashboard/wishlist' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', path: '/client/dashboard/settings' },
+    { id: 'overview', label: t('Overview'), icon: '🏠', path: '/client/dashboard' },
+    { id: 'wedding', label: t('Wedding Profile'), icon: '💍', path: '/client/dashboard/wedding' },
+    { id: 'profile', label: t('My Profile'), icon: '👤', path: '/client/dashboard/profile' },
+    { id: 'orders', label: t('My Bookings'), icon: '📋', path: '/client/dashboard/orders' },
+    { id: 'wishlist', label: t('Wishlist'), icon: '❤️', path: '/client/dashboard/wishlist' },
+    { id: 'settings', label: t('Settings'), icon: '⚙️', path: '/client/dashboard/settings' },
   ];
 
   return (
@@ -106,6 +109,7 @@ const ClientDashboard: React.FC = () => {
 /* ═══════ OVERVIEW ═══════ */
 const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation(); // استخدام الترجمة هنا أيضاً
   const isDark = theme === 'dark';
   const [stats, setStats] = useState({ totalOrders: 0, activeOrders: 0, wishlistItems: 0, savedVendors: 0 });
 
@@ -138,10 +142,11 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
     return () => window.removeEventListener('favoritesUpdated', handler);
   }, [client]);
 
+  // الترجمة للبطاقات الإحصائية
   const statCards = [
-    { label: 'Total Bookings', value: stats.totalOrders, icon: '📋', lightColor: '#7e99c4', darkColor: '#94a3b8' },
-    { label: 'Active Bookings', value: stats.activeOrders, icon: '🚀', lightColor: '#c7a48a', darkColor: '#d4af37' },
-    { label: 'Wishlist Items', value: stats.wishlistItems, icon: '❤️', lightColor: '#e8c597', darkColor: '#f3e5ab' },
+    { label: t('Total Bookings'), value: stats.totalOrders, icon: '📋', lightColor: '#7e99c4', darkColor: '#94a3b8' },
+    { label: t('Active Bookings'), value: stats.activeOrders, icon: '🚀', lightColor: '#c7a48a', darkColor: '#d4af37' },
+    { label: t('Wishlist Items'), value: stats.wishlistItems, icon: '❤️', lightColor: '#e8c597', darkColor: '#f3e5ab' },
   ];
 
   return (
@@ -149,10 +154,10 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
       {/* Welcome */}
       <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
         <h1 className="text-2xl font-semibold mb-1 text-[#1a1a2e] dark:text-slate-100">
-          Welcome back, {client.name?.split(' ')[0]}! 👋
+          {t('Welcome back')}, {client.name?.split(' ')[0]}! 👋
         </h1>
         <p className="text-sm text-[#b9a18e] dark:text-slate-400">
-          Here's an overview of your wedding planning journey.
+          {t("Here's an overview of your wedding planning journey.")}
         </p>
       </div>
 
@@ -173,23 +178,23 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
 
       {/* Quick Actions */}
       <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
-        <h2 className="text-lg font-semibold mb-4 text-[#1a1a2e] dark:text-slate-100">Quick Actions</h2>
+        <h2 className="text-lg font-semibold mb-4 text-[#1a1a2e] dark:text-slate-100">{t('Quick Actions')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {[
             { 
-              to: '/categories', label: 'Browse Vendors', icon: '🔍', 
+              to: '/categories', label: t('Browse Vendors'), icon: '🔍', 
               lightBg: '#c7a48a', 
               darkClasses: 'text-slate-950 shadow-[0_0_15px_rgba(212,175,55,0.3)]',
               darkStyle: { background: 'linear-gradient(to right, #d4af37, #f3e5ab, #c5a059)' }
             },
             { 
-              to: '/client/dashboard/wedding', label: 'Wedding Profile', icon: '💍', 
+              to: '/client/dashboard/wedding', label: t('Wedding Profile'), icon: '💍', 
               lightBg: '#7e99c4', 
               darkClasses: 'bg-[#1f2235] text-slate-200 border border-[#d4af37]/30 hover:bg-[#2a2d45]',
               darkStyle: {}
             },
             { 
-              to: '/client/dashboard/wishlist', label: 'My Wishlist', icon: '❤️', 
+              to: '/client/dashboard/wishlist', label: t('My Wishlist'), icon: '❤️', 
               lightBg: '#e8c597', 
               darkClasses: 'bg-[#1f2235] text-slate-200 border border-[#d4af37]/30 hover:bg-[#2a2d45]',
               darkStyle: {}
@@ -208,12 +213,12 @@ const DashboardOverview: React.FC<{ client: any }> = ({ client }) => {
 
       {/* Getting Started */}
       <div className="bg-white dark:bg-[#121420] rounded-2xl p-6 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 shadow-sm dark:shadow-[0_10px_30px_rgba(0,0,0,0.45)] transition-colors">
-        <h2 className="text-lg font-semibold mb-4 text-[#1a1a2e] dark:text-slate-100">Getting Started</h2>
+        <h2 className="text-lg font-semibold mb-4 text-[#1a1a2e] dark:text-slate-100">{t('Getting Started')}</h2>
         <div className="space-y-3">
           {[
-            { step: '1', text: 'Complete your wedding profile with date, budget and preferences', to: '/client/dashboard/wedding' },
-            { step: '2', text: 'Browse vendors by category and add favorites to your wishlist', to: '/categories' },
-            { step: '3', text: 'Book your favorite vendors and track everything in one place', to: '/client/dashboard/orders' },
+            { step: '1', text: t('Complete your wedding profile with date, budget and preferences'), to: '/client/dashboard/wedding' },
+            { step: '2', text: t('Browse vendors by category and add favorites to your wishlist'), to: '/categories' },
+            { step: '3', text: t('Book your favorite vendors and track everything in one place'), to: '/client/dashboard/orders' },
           ].map((item, i) => (
             <Link key={i} to={item.to}
               className="flex items-center gap-4 p-4 rounded-xl transition-all hover:shadow-sm bg-[#faf7f4] border border-[rgba(199,164,138,0.1)] dark:bg-[#0f1018] dark:border-[#d4af37]/15 dark:hover:bg-[#1a1c2b]">

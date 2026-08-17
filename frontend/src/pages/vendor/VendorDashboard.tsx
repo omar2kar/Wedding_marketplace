@@ -1062,20 +1062,37 @@ const VendorDashboard: React.FC = () => {
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
                         <select
-                          value={profileData?.category || ''}
-                          onChange={(e) => setProfileData(prev => prev ? { ...prev, category: e.target.value } : prev)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                        >
-                          <option value="Photography">Photography</option>
-                          <option value="Videography">Videography</option>
-                          <option value="Floristry">Floristry</option>
-                          <option value="Venues">Venues</option>
-                          <option value="Beauty">Beauty</option>
-                          <option value="Entertainment">Entertainment</option>
-                          <option value="Cake & Sweets">Cake & Sweets</option>
-                          <option value="Planning">Planning</option>
-                          <option value="Car Rental">Car Rental</option>
-                        </select>
+  value={profileData?.category || ''}
+  onChange={(e) =>
+    setProfileData(prev =>
+      prev
+        ? { ...prev, category: e.target.value }
+        : prev
+    )
+  }
+  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+>
+  <option value="Photography">Photography</option>
+  <option value="Videography">Videography</option>
+  <option value="Floristry & Decoration">
+    Floristry & Decoration
+  </option>
+  <option value="Locations">Locations</option>
+  <option value="Beauty & Styling">Beauty & Styling</option>
+  <option value="Music & Show">Music & Show</option>
+  <option value="Wedding Cakes & Sweets">
+    Wedding Cakes & Sweets
+  </option>
+  <option value="Wedding Planner">Wedding Planner</option>
+  <option value="Catering">Catering</option>
+  <option value="Bridal Fashion">Bridal Fashion</option>
+  <option value="Wedding Cars & Transport">
+    Wedding Cars & Transport
+  </option>
+  <option value="Wedding Rings & Jewelry">
+    Wedding Rings & Jewelry
+  </option>
+</select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Company Description</label>
@@ -1719,19 +1736,36 @@ const VendorDashboard: React.FC = () => {
                       Service Category
                     </label>
                     <select
-                      value={newService.category}
-                      onChange={(e) => setNewService({ ...newService, category: e.target.value })}
-                      className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 text-gray-800 text-lg transition-all duration-300"
-                    >
-                      <option value="Photography">📸 Photography</option>
-                      <option value="Videography">🎥 Videography</option>
-                      <option value="Floristry">🌸 Floristry</option>
-                      <option value="Venues">🏛️ Venues</option>
-                      <option value="Beauty">💄 Beauty</option>
-                      <option value="Entertainment">🎵 Entertainment</option>
-                      <option value="Cake & Sweets">🎂 Cake & Sweets</option>
-                      <option value="Planning">📋 Planning</option>
-                    </select>
+  value={newService.category}
+  onChange={(e) =>
+    setNewService({
+      ...newService,
+      category: e.target.value
+    })
+  }
+  className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 text-gray-800 text-lg transition-all duration-300"
+>
+  <option value="Photography">📸 Photography</option>
+  <option value="Videography">🎥 Videography</option>
+  <option value="Floristry & Decoration">
+    🌸 Floristry & Decoration
+  </option>
+  <option value="Locations">🏛️ Locations</option>
+  <option value="Beauty & Styling">💄 Beauty & Styling</option>
+  <option value="Music & Show">🎵 Music & Show</option>
+  <option value="Wedding Cakes & Sweets">
+    🎂 Wedding Cakes & Sweets
+  </option>
+  <option value="Wedding Planner">📋 Wedding Planner</option>
+  <option value="Catering">🍽️ Catering</option>
+  <option value="Bridal Fashion">👰 Bridal Fashion</option>
+  <option value="Wedding Cars & Transport">
+    🚗 Wedding Cars & Transport
+  </option>
+  <option value="Wedding Rings & Jewelry">
+    💎 Wedding Rings & Jewelry
+  </option>
+</select>
                   </div>
 
                   <div className="space-y-2">
