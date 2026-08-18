@@ -3,6 +3,66 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
 
+/* ── Background Pattern for Footer ── */
+const FooterBackgroundPattern = () => (
+  // تم زيادة الشفافية هنا لتصبح (0.12 في الفاتح و 0.10 في الداكن) لتبدو أغمق وأوضح
+  <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.12] dark:opacity-[0.10] overflow-hidden">
+    <svg width="100%" height="100%">
+      <defs>
+        {/* تم تغيير الـ ID لعدم حدوث تداخل مع خلفية الصفحة الرئيسية */}
+        <pattern 
+          id="footer-oneday-pattern" 
+          width="220" 
+          height="220" 
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(-30)"
+        >
+          <animate 
+            attributeName="x" 
+            from="0" 
+            to="-220" 
+            dur="30s" 
+            repeatCount="indefinite" 
+            calcMode="linear" 
+          />
+          <animate 
+            attributeName="y" 
+            from="0" 
+            to="220" 
+            dur="20s" 
+            repeatCount="indefinite" 
+            calcMode="linear" 
+          />
+
+          <g transform="translate(86, 50) scale(2)" stroke="currentColor" fill="none">
+            <circle cx="12" cy="14" r="7" strokeWidth="1.5" />
+            <path d="M8.5 6 L12 1.5 L15.5 6 L12 9.5 Z" fill="currentColor" stroke="none" />
+          </g>
+          
+          <text 
+            x="110" 
+            y="140" 
+            fontFamily="'Playfair Display', serif" 
+            fontSize="28" 
+            fill="currentColor" 
+            fontWeight="600" 
+            textAnchor="middle" 
+            letterSpacing="4"
+          >
+            oneday
+          </text>
+        </pattern>
+      </defs>
+      <rect 
+        width="100%" 
+        height="100%" 
+        fill="url(#footer-oneday-pattern)" 
+        className="text-[#c7a48a] dark:text-[#d4af37]" 
+      />
+    </svg>
+  </div>
+);
+
 const Footer: React.FC = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -10,14 +70,19 @@ const Footer: React.FC = () => {
 
   return (
     <footer
-      className="transition-colors duration-500 border-t border-transparent dark:border-[#d4af37]/20"
+      // أضفنا relative و overflow-hidden لاحتواء الخلفية المتحركة
+      className="relative overflow-hidden transition-colors duration-500 border-t border-transparent dark:border-[#d4af37]/20"
       style={{
         background: isDark
           ? 'linear-gradient(180deg, #0f111a 0%, #05060a 100%)'
           : 'linear-gradient(180deg, #f4e9dc 0%, #eaddd0 100%)',
       }}
     >
-      <div className="max-w-6xl mx-auto px-6 py-16">
+      {/* استدعاء الخلفية هنا */}
+      <FooterBackgroundPattern />
+
+      {/* أضفنا relative z-10 لجعل المحتوى فوق الخلفية */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div>

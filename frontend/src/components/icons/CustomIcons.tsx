@@ -463,6 +463,111 @@ export const CakeIcon: React.FC<IconProps> = ({ className = "", size = 24 }) => 
   </svg>
 );
 
+// Bridal Fashion Icon
+export const BridalFashionIcon: React.FC<IconProps> = ({
+  className = "",
+  size = 24
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    className={className}
+  >
+    {/* Dress silhouette */}
+    <path
+      d="M9 4c0 1.1-.6 2.1-1.5 2.8L5 9l2.5 2L6 19h12l-1.5-8L19 9l-2.5-2.2C15.6 6.1 15 5.1 15 4"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+
+    {/* Neckline */}
+    <path
+      d="M9 4c.7 1 1.7 1.5 3 1.5S14.3 5 15 4"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+
+    {/* Waist */}
+    <path
+      d="M7 11h10"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+
+    {/* Dress detail */}
+    <path
+      d="M10 15h4"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+
+// Wedding Cars & Transport Icon
+export const CarTransportIcon: React.FC<IconProps> = ({
+  className = "",
+  size = 24
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    className={className}
+  >
+    {/* Car body */}
+    <path
+      d="M4 16h16v-4.5a2 2 0 0 0-2-2h-1.2l-1.6-3.2A2 2 0 0 0 13.4 5H10.6a2 2 0 0 0-1.8 1.3L7.2 9.5H6a2 2 0 0 0-2 2V16Z"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+
+    {/* Roof / windows */}
+    <path
+      d="M8 10h8"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+
+    {/* Wheels */}
+    <circle
+      cx="7"
+      cy="17"
+      r="2"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    <circle
+      cx="17"
+      cy="17"
+      r="2"
+      stroke="currentColor"
+      strokeWidth="2"
+    />
+
+    {/* Front / rear details */}
+    <path
+      d="M4 13h2M18 13h2"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 // Clipboard Icon (Planning)
 export const ClipboardIcon: React.FC<IconProps> = ({ className = "", size = 24 }) => (
   <svg 

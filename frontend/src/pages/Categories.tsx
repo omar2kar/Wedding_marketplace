@@ -107,7 +107,8 @@ const Categories: React.FC = () => {
 
   return (
     <div className="bg-[#f4e9dc] dark:bg-[#090a10] min-h-screen pt-[100px] transition-colors duration-300">
-      <div className="max-w-5xl mx-auto px-6 py-16">
+      {/* تم تغيير max-w-5xl إلى max-w-6xl ليتناسب مع عرض البطاقات الجديدة كما في الهوم */}
+      <div className="max-w-6xl mx-auto px-6 py-16">
 
         {/* Header */}
         <div className="text-center mb-14">
@@ -124,36 +125,139 @@ const Categories: React.FC = () => {
           </p>
         </div>
 
-        {/* Categories Grid */}
+        {/* Categories Grid - نسخة مطابقة تماماً للصفحة الرئيسية */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
           {categories.map((cat, i) => (
             <Link
               key={cat.id}
               to={cat.to}
-              className="group flex flex-col items-center py-10 px-5 rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl bg-white dark:bg-[#121420]/80 border border-[rgba(199,164,138,0.15)] dark:border-[#d4af37]/20 hover:dark:border-[#d4af37] hover:dark:shadow-[0_0_25px_rgba(212,175,55,0.2)]"
-              style={{
-                animationDelay: `${i * 60}ms`
-              }}
+              className="
+                group relative overflow-hidden
+                flex flex-col justify-between
+                min-h-[250px]
+                p-6 md:p-7
+                rounded-3xl
+                bg-white dark:bg-[#121420]
+                border border-[rgba(199,164,138,0.15)]
+                dark:border-[#d4af37]/15
+                transition-all duration-500
+                hover:-translate-y-2
+                hover:shadow-[0_20px_50px_rgba(199,164,138,0.15)]
+                dark:hover:shadow-[0_20px_50px_rgba(212,175,55,0.12)]
+                hover:border-[#c7a48a]
+                dark:hover:border-[#d4af37]/50
+              "
             >
-              {/* Icon */}
-              <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 bg-[rgba(232,197,151,0.1)] dark:bg-[#1f2235]">
-                <div className="w-8 h-8 text-[#e8c597] dark:text-[#d4af37] transition-colors">
-                  {cat.icon}
+              {/* الرقم التسلسلي */}
+              <span className="
+                absolute top-5 right-6
+                text-xs font-semibold tracking-[0.2em]
+                text-[#c7a48a]/40
+                dark:text-[#d4af37]/30
+                transition-colors duration-300
+                group-hover:text-[#c7a48a]
+                dark:group-hover:text-[#d4af37]
+              ">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              {/* التوهج الديكوري */}
+              <div className="
+                absolute -top-16 -right-16
+                w-32 h-32 rounded-full
+                bg-[#e8c597]/10
+                dark:bg-[#d4af37]/5
+                blur-2xl
+                transition-transform duration-700
+                group-hover:scale-150
+              " />
+
+              {/* الأيقونة */}
+              <div className="relative z-10">
+                <div className="
+                  w-16 h-16
+                  rounded-2xl
+                  flex items-center justify-center
+                  bg-[#faf7f4]
+                  dark:bg-[#1b1e2d]
+                  border border-[#e8c597]/20
+                  dark:border-[#d4af37]/15
+                  transition-all duration-500
+                  group-hover:scale-110
+                  group-hover:-rotate-3
+                  group-hover:border-[#c7a48a]
+                  dark:group-hover:border-[#d4af37]/50
+                ">
+                  <div className="
+                    w-8 h-8
+                    text-[#c7a48a]
+                    dark:text-[#d4af37]
+                    transition-transform duration-500
+                    group-hover:scale-110
+                  ">
+                    {cat.icon}
+                  </div>
                 </div>
               </div>
 
-              {/* Title */}
-              <h3 className="font-playfair font-medium text-lg mb-1 text-[#1a1a2e] dark:text-slate-100 group-hover:dark:text-[#f3e5ab] transition-colors">
-                {cat.title}
-              </h3>
+              {/* النصوص */}
+              <div className="relative z-10 mt-auto pt-8">
+                <h3 className="
+                  font-playfair
+                  text-xl
+                  font-medium
+                  text-[#1a1a2e]
+                  dark:text-slate-100
+                  transition-colors duration-300
+                  group-hover:text-[#c7a48a]
+                  dark:group-hover:text-[#f3e5ab]
+                ">
+                  {cat.title}
+                </h3>
 
-              {/* Subtitle */}
-              <p className="text-xs text-[#b9a18e] dark:text-slate-400">
-                {cat.subtitle}
-              </p>
+                <p className="
+                  mt-2
+                  text-xs
+                  text-[#a08b7a]
+                  dark:text-slate-500
+                ">
+                  {cat.subtitle}
+                </p>
+              </div>
 
-              {/* Bottom accent line */}
-              <div className="mt-4 w-8 h-0.5 rounded-full transition-all duration-300 group-hover:w-12 bg-[#e8c597] dark:bg-[#d4af37]"></div>
+              {/* الجزء السفلي (الخط والسهم) */}
+              <div className="
+                relative z-10
+                mt-6
+                flex items-center justify-between
+              ">
+                <div className="
+                  h-px flex-1
+                  bg-[#e8c597]/30
+                  dark:bg-[#d4af37]/15
+                  transition-all duration-500
+                  group-hover:bg-[#c7a48a]/70
+                  dark:group-hover:bg-[#d4af37]/50
+                " />
+
+                <span className="
+                  ml-4
+                  w-9 h-9
+                  rounded-full
+                  flex items-center justify-center
+                  border border-[#e8c597]/30
+                  dark:border-[#d4af37]/20
+                  text-[#c7a48a]
+                  dark:text-[#d4af37]
+                  transition-all duration-500
+                  group-hover:bg-[#c7a48a]
+                  group-hover:text-white
+                  dark:group-hover:bg-[#d4af37]
+                  dark:group-hover:text-slate-950
+                ">
+                  ↗
+                </span>
+              </div>
             </Link>
           ))}
         </div>
